@@ -61,6 +61,13 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
   }, [])
   
   useEffect(() => {
+    if(url === "/"){
+      setDataMaster(false);
+      setDataMasterOpd(false);
+      setPerencanaanKota(false);
+      setPerencanaanOPD(false);
+      setLaporan(false);
+    }
     //DATA MASTER
     if (
       url.startsWith("/datamaster")
@@ -205,7 +212,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setLaporan(true);
     }
     if (
-      url.startsWith("/")
+      url.startsWith("/laporan/review-pokin")
     ) {
       setReview(true);
       setRenstraView(false);
@@ -901,8 +908,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Rencana Kinerja KAK</span>
                 </li>
               </Link>
-              <Link href="/laporanrincianbelanja">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrincianbelanja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/laporan/rincian-belanja">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/rincian-belanja" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbDeviceImacDollar className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Rincian Belanja</span>
                 </li>
