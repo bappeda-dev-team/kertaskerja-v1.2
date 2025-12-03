@@ -205,8 +205,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setLaporan(true);
     }
     if (
-      url === "/reviewpemda" ||
-      url === "/reviewopd"
+      url.startsWith("/")
     ) {
       setReview(true);
       setRenstraView(false);
@@ -845,14 +844,14 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               </li>
               {/* SUBS MENU LAPORAN REVIEW */}
               <div className={`transition-all duration-300 ease-in-out ${Review ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                <Link href="/reviewpemda">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/reviewpemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/laporan/review-pokin/review-pemda">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/review-pokin/review-pemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbZoomExclamation className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Review Pemda</span>
                   </li>
                 </Link>
-                <Link href="/reviewopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/reviewopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/laporan/review-pokin/review-opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/review-pokin/review-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbZoomExclamation className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Review OPD</span>
                   </li>

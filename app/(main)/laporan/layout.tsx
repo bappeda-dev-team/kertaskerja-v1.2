@@ -1,5 +1,8 @@
 'use client'
 
+import { useBrandingContext } from "@/providers/BrandingProvider";
+import { IsLoadingBranding } from "@/lib/loading";
+
 interface PerencanaanAsnLayout {
     children: React.ReactNode;
 }
@@ -7,5 +10,12 @@ interface PerencanaanAsnLayout {
 export default function LaporanLayout({
     children
 }: PerencanaanAsnLayout) {
-    return<>{children}</>
+
+    const {LoadingBranding, branding} = useBrandingContext()
+    
+    if(LoadingBranding){
+        return <IsLoadingBranding />
+    } else {
+        return<>{children}</>
+    }
 }
