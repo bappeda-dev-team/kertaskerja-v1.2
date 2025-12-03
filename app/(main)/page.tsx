@@ -9,7 +9,7 @@ import { ButtonSky } from "@/components/ui/button";
 
 const Dashboard = () => {
 
-  const { LoadingBranding } = useBrandingContext();
+  const { LoadingBranding, branding } = useBrandingContext();
 
   const manual_user = process.env.NEXT_PUBLIC_LINK_MANUAL_USER;
 
@@ -22,9 +22,14 @@ const Dashboard = () => {
       <div className="flex flex-col gap-2">
         <div className="p-5 rounded-xl border border-emerald-500">
           <p className="flex items-center gap-1 font-bold">
-            <TbCircleFilled color="green"/>
-            Selamat Datang, di kertas kerja perencanaan
+            <TbCircleFilled color="green" />
+            Selamat Datang, {branding?.user?.nama_pegawai ? branding?.user?.nama_pegawai : 'di halaman dashboard'}
           </p>
+          {(branding?.user?.roles != "super_admin" && branding?.user?.roles != "reviewer") &&
+            <p>
+              {branding?.user?.nama_opd ? branding?.user?.nama_opd : 'tidak terdaftar di OPD manapun'}
+            </p>
+          }
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 p-5 rounded-xl border border-sky-500">
           <h1 className="flex items-center gap-2">

@@ -814,16 +814,22 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             {/* SUB MENU LAPORAN */}
             <div className={`transition-all duration-300 ease-in-out ${Laporan ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
   
-              <Link href="/listopd">
-                <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/listopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/laporan/list-opd">
+                <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/laporan/list-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbListDetails className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>List OPD di Tematik</span>
                 </li>
               </Link>
-              <Link href="/controlpokin">
-                <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/controlpokin" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/laporan/control-pokin">
+                <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/laporan/control-pokin" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbListTree className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Control Pokin</span>
+                </li>
+              </Link>
+              <Link href="/laporan/leaderboard-rekin">
+                <li className={`flex items-center gap-x-2 text-sm cursor-pointer p-2 rounded-xl ${url === "/laporan/leaderboard-rekin" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <TbChartBar className="text-xl" />
+                  <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Leaderboard Rekin</span>
                 </li>
               </Link>
               {/* LABEL LAPORAN REVIEW */}
