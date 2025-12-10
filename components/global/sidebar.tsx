@@ -301,8 +301,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             {/* SUB MENU DATA MASTER */}
             {User?.roles == 'super_admin' &&
               <div className={`transition-all duration-300 ease-in-out ${DataMaster ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                <Link href="/DataMaster/masterlembaga">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterlembaga" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/datamaster/lembaga">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/lembaga" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbBuildingEstate className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Lembaga</span>
                   </li>

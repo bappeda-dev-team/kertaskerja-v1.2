@@ -6,3 +6,9 @@ export interface OptionType {
     value: number;
     label: string;
 }
+
+export interface GetResponseGlobal<T> {
+    data: T
+    status: string;
+    code: number;
+}
