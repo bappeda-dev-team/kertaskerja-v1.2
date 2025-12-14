@@ -3,27 +3,27 @@
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/lib/loading";
 import { useBrandingContext } from "@/providers/BrandingProvider";
-import { GetResponseFindallLembaga } from "../type";
+import { GetResponseMasterOpd } from "../type";
 import { AlertNotification } from "@/lib/alert";
 import { apiFetch } from "@/hook/apiFetch";
 import { ButtonSkyBorder, ButtonRedBorder, ButtonSky } from "@/components/ui/button";
 import { TbPencil, TbTrash, TbCirclePlus } from "react-icons/tb";
 import { Card, HeaderCard } from "@/components/ui/Card";
-import { ModalLembaga } from "./ModalLembaga";
+import { ModalOpd } from "./ModalOpd";
 
 const Table = () => {
 
-    const [Data, setData] = useState<GetResponseFindallLembaga[]>([]);
+    const [Data, setData] = useState<GetResponseMasterOpd[]>([]);
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
     const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
-    const [DataModal, setDataModal] = useState<GetResponseFindallLembaga | null>(null);
+    const [DataModal, setDataModal] = useState<GetResponseMasterOpd | null>(null);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Error, setError] = useState<boolean | null>(null);
     const [Loading, setLoading] = useState<boolean | null>(null);
     const { branding } = useBrandingContext();
 
-    const handleModal = (jenis: "tambah" | "edit", data: GetResponseFindallLembaga | null) => {
+    const handleModal = (jenis: "tambah" | "edit", data: GetResponseMasterOpd | null) => {
         if (ModalOpen) {
             setModalOpen(false);
             setDataModal(null);
@@ -36,9 +36,9 @@ const Table = () => {
     }
 
     useEffect(() => {
-        const getLembaga = async () => {
+        const getData = async () => {
             setLoading(true);
-            await apiFetch<any>(`${branding?.api_perencanaan}/lembaga/findall`, {
+            await apiFetch<any>(`${branding?.api_perencanaan}/opd/findall`, {
                 method: "GET",
             }).then((resp) => {
                 const data = resp.data;
@@ -55,7 +55,7 @@ const Table = () => {
                 setLoading(false);
             })
         }
-        getLembaga();
+        getData();
     }, [branding, FetchTrigger]);
 
     if (Loading) {
@@ -75,13 +75,13 @@ const Table = () => {
             <>
                 <Card>
                     <HeaderCard>
-                        <h1 className="font-bold text-lg uppercase">Master Lembaga</h1>
+                        <h1 className="font-bold text-lg uppercase">Master OPD</h1>
                         <ButtonSky 
                             className='flex items-center gap-1'
                             onClick={() => handleModal("tambah", null)}
                         >
                             <TbCirclePlus />
-                            Tambah Lembaga
+                            Tambah OPD
                         </ButtonSky>
                     </HeaderCard>
                     <div className="flex flex-wrap m-2">
@@ -90,25 +90,31 @@ const Table = () => {
                                 <thead>
                                     <tr className="bg-orange-500 text-white">
                                         <th className="border-r border-b border-gray-200 px-6 py-3 w-[50px] text-center">No</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[150px]">Id Lembaga</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Nama Lembaga</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[100px]">Kode Lembaga</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[150px]">Kode OPD</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Nama OPD</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Nama Kepala OPD</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">NIP Kepala OPD</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[100px]">Pangkat Kepala OPD</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[100px]">Lembaga</th>
                                         <th className="border-l border-b border-gray-200 px-6 py-3 w-[100px]">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Data.length > 0 ?
-                                        Data.map((item: GetResponseFindallLembaga, index: number) => (
+                                        Data.map((item: GetResponseMasterOpd, index: number) => (
                                             <tr key={index}>
                                                 <td className="border-x border-b border-orange-500 py-4 px-3 text-center">{index + 1}</td>
-                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.id || "-"}</td>
-                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.nama_lembaga || "-"}</td>
-                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.kode_lembaga || 0}</td>
+                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.kode_opd || "-"}</td>
+                                                <td className="border-r border-b border-orange-500 px-6 py-4">{item.nama_opd || "-"}</td>
+                                                <td className="border-r border-b border-orange-500 px-6 py-4">{item.nama_kepala_opd || "-"}</td>
+                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.nip_kepala_opd || "-"}</td>
+                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.pangkat_kepala || "-"}</td>
+                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.id_lembaga.nama_lembaga || "-"}</td>
                                                 <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
                                                     <div className="flex flex-col items-center gap-1">
                                                         <ButtonSkyBorder
                                                             className="w-full flex items-center gap-1"
-                                                            onClick={() => handleModal("edit", item)}
+                                                            onClick={() => handleModal("tambah", item)}
                                                         >
                                                             <TbPencil />
                                                             Edit
@@ -136,7 +142,7 @@ const Table = () => {
                     </div>
                 </Card>
                 {ModalOpen &&
-                    <ModalLembaga 
+                    <ModalOpd 
                         isOpen={ModalOpen}
                         onClose={() => handleModal("tambah", null)}
                         onSuccess={() => setFetchTrigger((prev) => !prev)}

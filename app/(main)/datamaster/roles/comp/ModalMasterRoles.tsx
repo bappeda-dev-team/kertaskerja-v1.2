@@ -6,7 +6,7 @@ import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-fo
 import { ButtonSky, ButtonRed } from "@/components/ui/button";
 import { AlertNotification } from "@/lib/alert";
 import { LoadingButton } from "@/lib/loading";
-import { GetResponseFindallLembaga } from "../type";
+import { GetResponseRoles, FormValue } from "../type";
 import { apiFetch } from "@/hook/apiFetch";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 
@@ -15,23 +15,14 @@ interface modal {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
-    Data: GetResponseFindallLembaga | null
-}
-interface FormValue {
-    id: string;
-    id_lembaga: number;
-    nama_lembaga: string;
-    kode_lembaga: string;
+    Data: GetResponseRoles | null
 }
 
-export const ModalLembaga: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, Data }) => {
+export const ModalMasterRoles: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, Data }) => {
 
     const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValue>({
         defaultValues: {
-            id: Data?.id,
-            id_lembaga: Data?.id_lembaga,
-            nama_lembaga: Data?.nama_lembaga,
-            kode_lembaga: Data?.kode_lembaga
+            role: Data?.role,
         }
     });
 
@@ -44,20 +35,18 @@ export const ModalLembaga: React.FC<modal> = ({ isOpen, onClose, onSuccess, jeni
     }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formData = {
             //key : value
-            nama_lembaga: data.nama_lembaga,
-            kode_lembaga: data.kode_lembaga,
+            role: data.role,
         };
         // console.log(formData);
         try {
             setProses(true);
-            await apiFetch(jenis === "tambah" ? `${branding?.api_perencanaan}/lembaga/create` : `${branding?.api_perencanaan}/lembaga/update/${Data?.id}`, {
+            await apiFetch(jenis === "tambah" ? `${branding?.api_perencanaan}/role/create` : `${branding?.api_perencanaan}/role/update/${Data?.id}`, {
                 method: jenis === "tambah" ? "POST" : "PUT",
                 body: formData as any
             }).then(_ => {
-                AlertNotification("Berhasil", "Berhasil Menyimpan Data Lembaga", "success", 3000, true);
+                AlertNotification("Berhasil", "Berhasil Menyimpan Data Roles", "success", 3000, true);
                 onSuccess();
                 handleClose();
             }).catch(err => {
@@ -84,44 +73,30 @@ export const ModalLembaga: React.FC<modal> = ({ isOpen, onClose, onSuccess, jeni
                         className="flex flex-col mx-5 py-5"
                     >
                         <div className="border-b">
-                            <h1 className="text-xl font-semibold uppercase text-center">{jenis} Lembaga</h1>
+                            <h1 className="text-xl font-semibold uppercase text-center">{jenis} Roles</h1>
                         </div>
-                        <div className="flex flex-col py-3">
-                            <label className="uppercase text-xs font-bold text-gray-700 my-2">
-                                Nama Lembaga :
-                            </label>
-                            <Controller
-                                name="nama_lembaga"
-                                control={control}
-                                render={({ field }) => (
-                                    <input
-                                        {...field}
-                                        id="nama_lembaga"
-                                        type="text"
-                                        className="border px-4 py-2 rounded-lg"
-                                        placeholder="masukkan Nama Lembaga"
-                                    />
-                                )}
-                            />
-                        </div>
-                        <div className="flex flex-col py-3">
-                            <label className="uppercase text-xs font-bold text-gray-700 my-2">
-                                Kode Lembaga :
-                            </label>
-                            <Controller
-                                name="kode_lembaga"
-                                control={control}
-                                render={({ field }) => (
-                                    <input
-                                        {...field}
-                                        id="kode_lembaga"
-                                        type="text"
-                                        className="border px-4 py-2 rounded-lg"
-                                        placeholder="masukkan Kode Lembaga"
-                                    />
-                                )}
-                            />
-                        </div>
+                        <Controller
+                            name="role"
+                            control={control}
+                            rules={{ required: "" }}
+                            render={({ field }) => {
+                                return (
+                                    <>
+                                        <label className="uppercase text-xs font-bold text-gray-700 my-2">
+                                            Nama Role : {errors.role && <span className="text-red-400 italic">wajib terisi</span>}
+                                        </label>
+                                        <input
+                                            {...field}
+                                            id="role"
+                                            type="text"
+                                            className="border px-4 py-2 rounded-lg"
+                                            placeholder="masukkan Nama Role"
+                                        />
+                                    </>
+                                )
+                            }
+                            }
+                        />
                         <div className="flex flex-col gap-1 mt-3">
                             <ButtonSky type="submit" className="w-full" disabled={Proses}>
                                 {Proses ?

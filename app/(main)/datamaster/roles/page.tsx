@@ -7,7 +7,7 @@ const MasterLembaga = () => {
 
     const menu = [
         { label: "Data Master", href: "/" },
-        { label: "Master Lembaga", href: "/datamaster/lembaga", active: true }
+        { label: "Master Roles", href: "/datamaster/roles", active: true }
     ]
 
     return (

@@ -307,14 +307,14 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Lembaga</span>
                   </li>
                 </Link>
-                <Link href="/DataMaster/masteropd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masteropd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/datamaster/opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbBuilding className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master OPD</span>
                   </li>
                 </Link>
-                <Link href="/DataMaster/masterrole">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterrole" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/datamaster/roles">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/roles" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbHexagonLetterR className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Role</span>
                   </li>
