@@ -80,7 +80,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       // sub menu
       setMasterProgramKegiatan(false);
     }
-    if (url.startsWith("/DataMaster/masterprogramkegiatan")) {
+    if (url.startsWith("/datamaster/programkegiatan")) {
       setMasterProgramKegiatan(true);
     }
     //DATA MASTER OPD
@@ -265,9 +265,9 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           <div className="flex gap-x-4 items-center">
             <div className={`flex flex-wrap justify-center text-white text-center text-lg ${!isOpen && 'scale-0'} duration-300`}>
               <h2 className='font-bold uppercase'>
-                Kertas Kerja
+                {branding?.title || "Kertas Kerja"}
               </h2>
-              <h3 className='font-thin text-lg'>Developer Only</h3>
+              <h3 className='font-thin text-lg'>{branding?.client || ""}</h3>
             </div>
           </div>
   
@@ -319,8 +319,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Role</span>
                   </li>
                 </Link>
-                <Link href="/DataMaster/masterpegawai">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/DataMaster/masterpegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/datamaster/masterpegawai">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterpegawai" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbUsers className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Pegawai</span>
                   </li>
@@ -337,8 +337,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master User</span>
                   </li>
                 </Link>
-                <Link href="/datamaster/masterjabatan">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterjabatan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/datamaster/jabatan">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/jabatan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbBadges className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Jabatan</span>
                   </li>
@@ -368,32 +368,32 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </li>
                 {/* DATA MASTER PROGRAM KEGIATAN */}
                 <div className={`transition-all duration-300 ease-in-out ${MasterProgramKegiatan ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                  <Link href="/datamaster/masterprogramkegiatan/urusan">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterprogramkegiatan/urusan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/datamaster/programkegiatan/urusan">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/programkegiatan/urusan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbFileChart className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Urusan</span>
                     </li>
                   </Link>
-                  <Link href="/datamaster/masterprogramkegiatan/bidangurusan">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterprogramkegiatan/bidangurusan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/datamaster/programkegiatan/bidang-urusan">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/programkegiatan/bidang-urusan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbFileDelta className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Bidang Urusan</span>
                     </li>
                   </Link>
-                  <Link href="/datamaster/masterprogramkegiatan/program">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterprogramkegiatan/program" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/datamaster/programkegiatan/program">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/programkegiatan/program" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbFileDots className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Program</span>
                     </li>
                   </Link>
-                  <Link href="/datamaster/masterprogramkegiatan/kegiatan">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterprogramkegiatan/kegiatan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/datamaster/programkegiatan/kegiatan">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/programkegiatan/kegiatan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbFileCode className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Kegiatan</span>
                     </li>
                   </Link>
-                  <Link href="/datamaster/masterprogramkegiatan/subkegiatan">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterprogramkegiatan/subkegiatan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/datamaster/programkegiatan/sub-kegiatan">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/programkegiatan/sub-kegiatan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbFileCode2 className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sub Kegiatan</span>
                     </li>

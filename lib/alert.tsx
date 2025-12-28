@@ -34,12 +34,9 @@ export const AlertQuestion = (
       showCancelButton: true,
       confirmButtonText: confirmButtonText,
       cancelButtonText: cancelButtonText,
+      confirmButtonColor: '#F26464',
       buttonsStyling: true,
       reverseButtons: true,
-      customClass: {
-        confirmButton: "bg-gradient-to-r from-[#BE1010] to-[#EA5353] hover:from-[#670505] hover:to-[#FF0000] text-white font-bold",
-        cancelButton: "bg-gradient-to-r from-[#007F73] to-[#40DA97] hover:from-[#4AAF9B] hover:to-[#64B07B] text-white font-bold",
-      }
     });
 }
 export const AlertQuestion2 = (

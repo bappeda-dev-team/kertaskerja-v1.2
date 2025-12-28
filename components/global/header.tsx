@@ -68,11 +68,21 @@ const Header = () => {
                 throw new Error('cant fetch data opd');
             }
             const data = await response.json();
-            const opd = data.data.map((item: any) => ({
-                value: item.kode_opd,
-                label: item.nama_opd,
-            }));
-            setOpdOption(opd);
+            if (data.code === 200) {
+                const opd = data.data.map((item: any) => ({
+                    value: item.kode_opd,
+                    label: item.nama_opd,
+                }));
+                setOpdOption(opd);
+            } else if (data.code === 401) {
+                AlertNotification("Login Ulang", "Session telah habis, silakan login ulang", "info", 2000, true);
+                localStorage.removeItem("token")
+                document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+                window.location.href = "/login"
+            } else {
+                AlertNotification("Error", "gagal mengambil data opd, cek koneksi internet, jika berlanjut hubungi tim developer", "info", 2000, true);
+                console.log('gagal mendapatkan data opd');
+            }
         } catch (err) {
             console.log('gagal mendapatkan data opd');
         } finally {
@@ -139,7 +149,7 @@ const Header = () => {
                             })
                         }}
                         onChange={(option) => setSelectedOpd(option)}
-                        options={OpdOption} 
+                        options={OpdOption}
                         placeholder="Pilih OPD ..."
                         value={SelectedOpd || Opd}
                         isLoading={IsLoading}
