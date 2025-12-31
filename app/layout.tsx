@@ -27,7 +27,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${font} antialiased custom-scrollbar`}
+        className={`${font} antialiased custom-scrollbar bg-white`}
       >
         <NextTopLoader />
         {children}

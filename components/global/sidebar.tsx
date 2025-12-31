@@ -263,7 +263,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           )}
           {/* header sidebar */}
           <div className="flex gap-x-4 items-center">
-            <div className={`flex flex-wrap justify-center text-white text-center text-lg ${!isOpen && 'scale-0'} duration-300`}>
+            <div className={`flex flex-wrap justify-center items-center text-white text-center text-lg ${!isOpen && 'scale-0'} duration-300`}>
               <h2 className='font-bold uppercase'>
                 {branding?.title || "Kertas Kerja"}
               </h2>

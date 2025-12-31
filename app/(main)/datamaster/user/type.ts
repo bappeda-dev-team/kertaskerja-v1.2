@@ -14,7 +14,7 @@ export interface Role {
 }
 
 export interface FormValue {
-    nip: OptionTypeString;
+    nip?: OptionTypeString;
     email: string;
     password: string;
     is_active: OptionTypeBoolean;

@@ -12,6 +12,7 @@ import { apiFetch } from "@/hook/apiFetch";
 import { Card, HeaderCard } from "@/components/ui/Card";
 import { OptionTypeString } from "@/types";
 import { GetResponseMasterUser, Role } from "../type";
+import { ModalMasterUser } from "./ModalMasterUser";
 
 const Table = () => {
 
@@ -22,6 +23,14 @@ const Table = () => {
     const [Loading, setLoading] = useState<boolean | null>(null);
     const [IsLoading, setIsLoading] = useState<boolean>(false);
     const [DataNull, setDataNull] = useState<boolean | null>(null);
+
+    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
+    const [Proses, setProses] = useState<boolean | null>(null);
+
+    const [Data, setData] = useState<GetResponseMasterUser[]>([]);
+    const [ModalOpen, setModalOpen] = useState<boolean>(false);
+    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+    const [DataModal, setDataModal] = useState<GetResponseMasterUser | null>(null);
 
     const { branding } = useBrandingContext();
 
@@ -75,6 +84,32 @@ const Table = () => {
 
     };
 
+    const handleModal = (jenis: "tambah" | "edit", data: GetResponseMasterUser | null) => {
+        if (ModalOpen) {
+            setModalOpen(false);
+            setDataModal(null);
+            setJenisModal("tambah");
+        } else {
+            setModalOpen(true);
+            setDataModal(data);
+            setJenisModal(jenis);
+        }
+    }
+
+    const hapusData = async (id: any) => {
+        setProses(true);
+        await apiFetch(`${branding?.api_perencanaan}/user/delete/${id}`, {
+            method: "DELETE",
+        }).then(resp => {
+            setData(Data.filter((data) => (data.id !== id)))
+            // setFetchTrigger((prev) => !prev);
+        }).catch(err => {
+            AlertNotification("Gagal", `${err}`, "error", 3000, true);
+        }).finally(() => {
+            setProses(false);
+        })
+    };
+
 
     if (Loading) {
         return (
@@ -93,13 +128,6 @@ const Table = () => {
             <Card>
                 <HeaderCard>
                     <h1 className="font-bold text-lg uppercase">Master User</h1>
-                    <ButtonSky
-                        className='flex items-center gap-1'
-                    // onClick={() => handleModal("tambah", null)}
-                    >
-                        <TbCirclePlus />
-                        Tambah OPD
-                    </ButtonSky>
                 </HeaderCard>
                 <div className="flex flex-wrap gap-2 items-center justify-between px-3 py-2">
                     <div className="uppercase">
@@ -148,10 +176,10 @@ const Table = () => {
                     <h1 className="font-bold text-lg uppercase">Master User</h1>
                     <ButtonSky
                         className='flex items-center gap-1'
-                    // onClick={() => handleModal("tambah", null)}
+                        onClick={() => handleModal("tambah", null)}
                     >
                         <TbCirclePlus />
-                        Tambah OPD
+                        Tambah User
                     </ButtonSky>
                 </HeaderCard>
                 <div className="flex flex-wrap gap-2 items-center justify-between px-3 py-2">
@@ -222,7 +250,7 @@ const Table = () => {
                                             <div className="flex flex-col jutify-center items-center gap-2">
                                                 <ButtonGreen
                                                     className="w-full flex items-center gap-1"
-                                                    halaman_url={`/DataMaster/masteruser/${data.id}`}
+                                                    onClick={() => handleModal("edit", data)}
                                                 >
                                                     <TbPencil />
                                                     Edit
@@ -232,8 +260,7 @@ const Table = () => {
                                                     onClick={() => {
                                                         AlertQuestion("Hapus?", "Hapus urusan yang dipilih?", "question", "Hapus", "Batal").then((result) => {
                                                             if (result.isConfirmed) {
-                                                                // hapusUrusan(data.id);
-                                                                AlertNotification("Pengembangan", "", "info", 3000)
+                                                                hapusData(data.id);
                                                             }
                                                         });
                                                     }}
@@ -249,6 +276,16 @@ const Table = () => {
                         </tbody>
                     </table>
                 </div>
+                {ModalOpen &&
+                    <ModalMasterUser
+                        isOpen={ModalOpen}
+                        onClose={() => handleModal("tambah", null)}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                        Data={DataModal}
+                        jenis={JenisModal}
+                        kode_opd={Opd.value}
+                    />
+                }
             </Card>
         </>
     )
