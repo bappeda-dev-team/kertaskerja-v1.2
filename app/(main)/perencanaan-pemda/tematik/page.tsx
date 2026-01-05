@@ -3,7 +3,7 @@
 import Table from './comp/Table';
 import { Breadcrumbs } from '@/components/ui/breadcrumb';
 
-const MasterJabatan = () => {
+const Tematik = () => {
 
     const menu = [
         { label: "Perencanaan Pemda", href: "/" },
@@ -18,4 +18,4 @@ const MasterJabatan = () => {
     )
 }
 
-export default MasterJabatan;
+export default Tematik;

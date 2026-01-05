@@ -95,17 +95,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setLaporan(false);
     }
     //PERENCANAAN PEMDA
-    if (
-      url === "/CSF" || url === "/outcome" || url === "/intermediate" ||
-      url.startsWith("/RKPD") ||
-      url === "/tematikpemda" ||
-      url === "/pohonkinerjapemda" ||
-      url === "/visi" ||
-      url === "/misi" ||
-      url === "/tujuanpemda" ||
-      url === "/sasaranpemda" ||
-      url === "/ikupemda"
-    ) {
+    if (url.startsWith("/perencanaan-pemda")) {
       setDataMaster(false);
       setDataMasterOpd(false);
       setPerencanaanKota(true);
@@ -490,8 +480,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                         </li>
                       </Link>
                     </div>
-                    <Link href="/pohonkinerjapemda">
-                      <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/pohonkinerjapemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                    <Link href="/perencanaan-pemda/pohon-kinerja-pemda">
+                      <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-pemda/pohon-kinerja-pemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbBinaryTree className="text-xl" />
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Pohon Kinerja Pemda</span>
                       </li>
