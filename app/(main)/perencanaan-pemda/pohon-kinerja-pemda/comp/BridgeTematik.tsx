@@ -94,7 +94,6 @@ const BridgeTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
                     <Pohon
                         user={branding?.user?.roles}
                         tema={Pokin}
-                        tahun={String(branding?.tahun?.value)}
                         deleteTrigger={() => setDeleted((prev) => !prev)}
                         show_all={show_all}
                         set_show_all={set_show_all}

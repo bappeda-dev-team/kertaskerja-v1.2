@@ -116,13 +116,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRPJMD(false);
       setRKPD(false);
     }
-    if (
-      url === "/visi" ||
-      url === "/misi" ||
-      url === "/tujuanpemda" ||
-      url === "/sasaranpemda" ||
-      url === "/ikupemda"
-    ) {
+    if (url.startsWith("/perencanaan-pemda/RPJMD")) {
       // sub menu
       setRPJMD(true);
       setTematikKota(false);
@@ -327,12 +321,12 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master User</span>
                   </li>
                 </Link>
-                <Link href="/datamaster/jabatan">
+                {/* <Link href="/datamaster/jabatan">
                   <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/jabatan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbBadges className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Master Jabatan</span>
                   </li>
-                </Link>
+                </Link> */}
                 <Link href="/datamaster/masterusulan">
                   <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl transition-all duration-300 ease-in-out ${url === "/datamaster/masterusulan" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbApps className="text-xl" />
@@ -448,38 +442,6 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                         <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tematik</span>
                       </li>
                     </Link>
-                    {/* LABEL TEMATIK (CSF, Outcome, intermediate) */}
-                    <li
-                      className={`flex justify-between items-center font-medium gap-x-2 cursor-pointer p-2 rounded-xl hover:bg-slate-500 transition-all duration-300 ease-in-out`}
-                      onClick={() => setTematikKota(TematikKota ? false : true)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <TbCalendarShare className="text-xl" />
-                        <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Isu Stategis</span>
-                      </div>
-                      <TbChevronRight className={`transition-all duration-200 ease-in-out ${TematikKota ? "rotate-90" : ""}`} />
-                    </li>
-                    {/* SUB MENU TEMATIK (CSF, Outcome, Intermediate) */}
-                    <div className={`transition-all duration-300 ease-in-out ${TematikKota ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                      <Link href="/CSF">
-                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/CSF" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                          <TbHexagonLetterC className="text-xl" />
-                          <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>CSF</span>
-                        </li>
-                      </Link>
-                      <Link href="/outcome">
-                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/outcome" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                          <TbHexagonLetterO className="text-xl" />
-                          <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Outcome</span>
-                        </li>
-                      </Link>
-                      <Link href="/intermediate">
-                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/intermediate" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
-                          <TbHexagonLetterI className="text-xl" />
-                          <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Intermediate</span>
-                        </li>
-                      </Link>
-                    </div>
                     <Link href="/perencanaan-pemda/pohon-kinerja-pemda">
                       <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-pemda/pohon-kinerja-pemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                         <TbBinaryTree className="text-xl" />
@@ -499,14 +461,14 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     </li>
                     {/* SUB MENU RPJMD */}
                     <div className={`transition-all duration-300 ease-in-out ${RPJMD ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                      <Link href="/visi">
-                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/visi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <Link href="/perencanaan-pemda/RPJMD/visi">
+                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-pemda/RPJMD/visi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                           <TbHexagonLetterV className="text-xl" />
                           <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Visi</span>
                         </li>
                       </Link>
-                      <Link href="/misi">
-                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/misi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <Link href="/perencanaan-pemda/RPJMD/misi">
+                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-pemda/RPJMD/misi" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                           <TbHexagonLetterM className="text-xl" />
                           <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Misi</span>
                         </li>

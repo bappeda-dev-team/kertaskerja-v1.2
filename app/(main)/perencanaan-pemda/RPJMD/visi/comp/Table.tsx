@@ -1,31 +1,32 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
-import { LoadingButton, LoadingClip } from "@/lib/loading";
+import { LoadingClip } from "@/lib/loading";
 import { useBrandingContext } from "@/providers/BrandingProvider";
-import { GetResponseFindallPeriode } from "../type";
+import { GetResponseFindAllVisi } from "../type";
 import { GetResponseGlobal } from "@/types";
-import { AlertNotification, AlertQuestion } from "@/lib/alert";
+import { AlertQuestion, AlertNotification } from "@/lib/alert";
 import { apiFetch } from "@/hook/apiFetch";
 import { ButtonSkyBorder, ButtonRedBorder } from "@/components/ui/button";
 import { TbPencil, TbTrash, TbCirclePlus } from "react-icons/tb";
+import { LoadingButton } from "@/lib/loading";
 import { Card, HeaderCard } from "@/components/ui/Card";
-import { ModalPeriode } from "./ModalPeriode";
+import { ModalVisi } from "./ModalVisi";
 
 const Table = () => {
 
-    const [Data, setData] = useState<GetResponseFindallPeriode[]>([]);
+    const [Data, setData] = useState<GetResponseFindAllVisi[]>([]);
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
     const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
-    const [DataModal, setDataModal] = useState<GetResponseFindallPeriode | null>(null);
+    const [DataModal, setDataModal] = useState<GetResponseFindAllVisi | null>(null);
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Error, setError] = useState<boolean | null>(null);
-    const [Loading, setLoading] = useState<boolean | null>(null);
     const [Proses, setProses] = useState<boolean>(false);
+    const [Loading, setLoading] = useState<boolean | null>(null);
     const { branding } = useBrandingContext();
 
-    const handleModal = (jenis: "tambah" | "edit", data: GetResponseFindallPeriode | null) => {
+    const handleModal = (jenis: "tambah" | "edit", data: GetResponseFindAllVisi | null) => {
         if (ModalOpen) {
             setModalOpen(false);
             setDataModal(null);
@@ -40,7 +41,7 @@ const Table = () => {
     useEffect(() => {
         const getLembaga = async () => {
             setLoading(true);
-            await apiFetch<GetResponseGlobal<GetResponseFindallPeriode[]>>(`${branding?.api_perencanaan}/periode/findall`, {
+            await apiFetch<GetResponseGlobal<GetResponseFindAllVisi[]>>(`${branding?.api_perencanaan}/visi_pemda/findall/tahun/${branding?.tahun?.value}/jenisperiode/RPJMD`, {
                 method: "GET",
             }).then((resp) => {
                 const data = resp.data;
@@ -62,11 +63,11 @@ const Table = () => {
 
     const hapusData = async (id: any) => {
         setProses(true);
-        await apiFetch(`${branding?.api_perencanaan}/periode/delete/${id}`, {
+        await apiFetch(`${branding?.api_perencanaan}/visi_pemda/delete/${id}`, {
             method: "DELETE",
         }).then(resp => {
             setData(Data.filter((data) => (data.id !== id)))
-            AlertNotification("Berhasil", "Tematik Berhasil Dihapus", "success", 2000);
+            AlertNotification("Berhasil", "Visi Berhasil Dihapus", "success", 2000);
         }).catch(err => {
             AlertNotification("Gagal", `${err}`, "error", 3000, true);
         }).finally(() => {
@@ -91,55 +92,58 @@ const Table = () => {
             <>
                 <Card>
                     <HeaderCard>
-                        <h1 className="font-bold text-lg uppercase">Master Periode</h1>
-                        <ButtonSkyBorder
-                            className='flex items-center gap-1'
-                            onClick={() => handleModal("tambah", null)}
-                        >
-                            <TbCirclePlus />
-                            Tambah Periode
-                        </ButtonSkyBorder>
+                        <h1 className="font-bold text-lg uppercase">Visi {branding?.tahun?.label || "tahun kosong"}</h1>
                     </HeaderCard>
                     <div className="flex flex-wrap m-2">
                         <div className="overflow-auto m-2 rounded-t-xl border border-gray-200 w-full">
                             <table className="w-full">
                                 <thead>
-                                    <tr className="bg-orange-500 text-white">
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[50px] text-center">No</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[100px]">Tahun Awal</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[100px]">Tahun Akhir</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[100px]">Jenis Periode</th>
+                                    <tr className="bg-emerald-500 text-white">
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Visi</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[100px]">Periode</th>
+                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Keterangan</th>
                                         <th className="border-l border-b border-gray-200 px-6 py-3 w-[100px]">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Data.length > 0 ?
-                                        Data.map((item: GetResponseFindallPeriode, index: number) => (
+                                    {Data === null ?
+                                        <tr>
+                                            <td className="px-6 py-3" colSpan={30}>
+                                                Data Kosong / Belum Ditambahkan
+                                                <ButtonSkyBorder
+                                                    className='mt-1 flex items-center gap-1'
+                                                    onClick={() => handleModal("tambah", null)}
+                                                >
+                                                    <TbCirclePlus />
+                                                    Tambah Visi
+                                                </ButtonSkyBorder>
+                                            </td>
+                                        </tr>
+                                        :
+                                        Data.map((item: GetResponseFindAllVisi, index: number) => (
                                             <tr key={index}>
-                                                <td className="border-x border-b border-orange-500 py-4 px-3 text-center">{index + 1}</td>
-                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.tahun_awal || "-"}</td>
-                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.tahun_akhir || "-"}</td>
-                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">{item.jenis_periode || "-"}</td>
-                                                <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
+                                                <td className="border-r border-b border-emerald-500 px-6 py-4">{item.visi || "-"}</td>
+                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">{item.jenis_periode || "-"}</td>
+                                                <td className="border-r border-b border-emerald-500 px-6 py-4">{item.keterangan || 0}</td>
+                                                <td className="border-r border-b border-emerald-500 px-6 py-4 text-center">
                                                     <div className="flex flex-col items-center gap-1">
                                                         <ButtonSkyBorder
                                                             className="w-full flex items-center gap-1"
                                                             onClick={() => handleModal("edit", item)}
-                                                            disabled={Proses}
                                                         >
                                                             <TbPencil />
                                                             Edit
                                                         </ButtonSkyBorder>
                                                         <ButtonRedBorder
-                                                            disabled={Proses}
                                                             className="w-full flex items-center gap-1"
                                                             onClick={() => {
-                                                                AlertQuestion("Hapus?", `Hapus Periode ${item.tahun_awal} - ${item.tahun_akhir} (${item.jenis_periode})?`, "question", "Hapus", "Batal").then((result) => {
+                                                                AlertQuestion("Hapus?", `Hapus Visi yang dipilih?`, "question", "Hapus", "Batal").then((result) => {
                                                                     if (result.isConfirmed) {
                                                                         hapusData(item.id);
                                                                     }
                                                                 });
                                                             }}
+                                                            disabled={Proses}
                                                         >
                                                             {Proses ?
                                                                 <>
@@ -157,12 +161,6 @@ const Table = () => {
                                                 </td>
                                             </tr>
                                         ))
-                                        :
-                                        <tr>
-                                            <td className="px-6 py-3" colSpan={30}>
-                                                Data Kosong / Belum Ditambahkan
-                                            </td>
-                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -170,7 +168,7 @@ const Table = () => {
                     </div>
                 </Card>
                 {ModalOpen &&
-                    <ModalPeriode
+                    <ModalVisi
                         isOpen={ModalOpen}
                         onClose={() => handleModal("tambah", null)}
                         onSuccess={() => setFetchTrigger((prev) => !prev)}

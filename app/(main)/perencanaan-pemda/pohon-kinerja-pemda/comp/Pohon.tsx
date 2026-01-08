@@ -9,13 +9,13 @@ import { LoadingClip } from '@/lib/loading';
 import { apiFetch } from '@/hook/apiFetch';
 import { useBrandingContext } from '@/providers/BrandingProvider';
 import { ModalReview } from '@/components/global/pohon/ModalReviewPohon';
+import { FormPohonPemda } from './FormPohonPemda';
 
 interface pohon {
     tema: any;
     deleteTrigger: () => void;
     user?: string;
     show_all?: boolean;
-    tahun?: string;
     idForm?: number;
     set_show_all: () => void;
 }
@@ -42,7 +42,7 @@ interface KeteranganTagging {
     tahun: string;
 }
 
-export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_all, set_show_all, idForm }) => {
+export const Pohon: React.FC<pohon> = ({ tema, deleteTrigger, user, show_all, set_show_all, idForm }) => {
 
     const [childPohons, setChildPohons] = useState(tema.childs || []);
     const [PutPohons, setPutPohons] = useState(tema.childs || []);
@@ -61,12 +61,13 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
     const [Show, setShow] = useState<boolean>(false);
 
     // REVIEW
-    const [IsNewReview, setIsNewReview] = useState<boolean>(false);
-    const [IsEditReview, setIsEditReview] = useState<boolean>(false);
+    const [ModalReviewOpen, setModalReviewOpen] = useState<boolean>(false);
     const [idReview, setIdReview] = useState<number | null>(null);
+    const [JenisModalReview, setJenisModalReview] = useState<"tambah" | "edit">("tambah")
     const [Review, setReview] = useState<Review[]>([]);
     const [ShowReview, setShowReview] = useState<boolean>(false);
     const [LoadingReview, setLoadingReview] = useState<boolean>(false);
+    const [ProsesHapusReview, setProsesHapusReview] = useState<boolean>(false);
 
     //CLONE
     const [IsClone, setIsClone] = useState<boolean>(false);
@@ -89,20 +90,15 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
         setShow((prev) => !prev);
     }
 
-    const handleNewReview = () => {
-        if (IsNewReview) {
-            setIsNewReview(false);
-        } else {
-            setIsNewReview(true);
-        }
-    };
-    const handleEditReview = (id: number) => {
-        if (IsEditReview) {
-            setIsEditReview(false);
+    const handleModalReview = (jenis: "tambah" | "edit", id: number | null) => {
+        if (ModalReviewOpen) {
+            setModalReviewOpen(false);
+            setJenisModalReview(jenis);
             setIdReview(0);
         } else {
-            setIsEditReview(true);
+            setModalReviewOpen(true);
             setIdReview(id);
+            setJenisModalReview(jenis);
         }
     };
     const fetchReview = async (id_pohon: any) => {
@@ -130,6 +126,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
     };
     const hapusReview = async (id_review: any) => {
         try {
+            setProsesHapusReview(true);
             await apiFetch(`${branding?.api_perencanaan}/review_pokin/delete/${id_review}`, {
                 method: "DELETE",
             }).then((resp: any) => {
@@ -139,6 +136,29 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                 } else {
                     AlertNotification("Berhasil", "Review Berhasil Dihapus", "success", 1000);
                     fetchReview(tema.id);
+                }
+            }).catch(err => {
+                AlertNotification("Gagal", `${err}`, "error", 3000, true);
+                console.error(err);
+            }).finally(() => {
+                setProsesHapusReview(false);
+            })
+        } catch (err) {
+            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
+            console.error(err);
+        }
+    };
+    const hapusPohon = async (id: number) => {
+        try {
+            await apiFetch(`${branding?.api_perencanaan}/pohon_kinerja_admin/delete/${id}`, {
+                method: "DELETE",
+            }).then((resp: any) => {
+                if (resp.code === 400 || resp.code === 500) {
+                    AlertNotification("Gagal", "Pohon gagal Dihapus", "success", 1000);
+                    console.log(resp);
+                } else {
+                    AlertNotification("Berhasil", "Pohon Berhasil Dihapus", "success", 1000);
+                    setDeleted(true);
                 }
             }).catch(err => {
                 AlertNotification("Gagal", `${err}`, "error", 3000, true);
@@ -201,283 +221,280 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                 :
                 <React.Fragment>
                     <li>
-                        <>
-                            <div className={CardPohon}>
-                                {/* HEADER */}
-                                <div className={HeaderPohon}>
-                                    <div className="flex flex-wrap items-center justify-center gap-1">
-                                        <h1>{tema.jenis_pohon} {tema.id}</h1>
-                                        {tema.is_active === false &&
-                                            <button className="px-2 bg-red-600 text-white rounded-xl cursor-default">NON-AKTIF</button>
+                        {edit ?
+                            <FormPohonPemda
+                                level={tema.level_pohon}
+                                id={tema.id}
+                                key={tema.id}
+                                formId={tema.id}
+                                jenis="edit"
+                                onCancel={() => setEdit(false)}
+                                EditBerhasil={handleEditSuccess}
+                            />
+                            :
+                            <>
+                                <div className={CardPohon}>
+                                    {/* HEADER */}
+                                    <div className={HeaderPohon}>
+                                        <div className="flex flex-wrap items-center justify-center gap-1">
+                                            <h1>{tema.jenis_pohon} {tema.id}</h1>
+                                            {tema.is_active === false &&
+                                                <button className="px-2 bg-red-600 text-white rounded-xl cursor-default">NON-AKTIF</button>
+                                            }
+                                        </div>
+                                    </div>
+                                    {/* BODY */}
+                                    <div className="flex justify-center my-3">
+                                        {Edited ?
+                                            <TablePohon item={Edited} />
+                                            :
+                                            <TablePohon item={tema} />
                                         }
                                     </div>
-                                </div>
-                                {/* BODY */}
-                                <div className="flex justify-center my-3">
-                                    {Edited ?
-                                        <TablePohon item={Edited} />
-                                        :
-                                        <TablePohon item={tema} />
-                                    }
-                                </div>
-                                {/* REVIEW */}
-                                {ShowReview && (
-                                    LoadingReview ?
-                                        <div className="flex w-full px-2 bg-white justify-center rounded-lg mt-2">
-                                            <LoadingClip />
-                                        </div>
-                                        :
-                                        Review.length == 0 ?
-                                            <div className="flex mt-2 text-center">
-                                                <h1 className='text-center bg-white w-full border border-black rounded-lg p-2'>tidak ada review</h1>
+                                    {/* REVIEW */}
+                                    {ShowReview && (
+                                        LoadingReview ?
+                                            <div className="flex w-full px-2 bg-white justify-center rounded-lg mt-2">
+                                                <LoadingClip />
                                             </div>
                                             :
-                                            <div className="flex mt-2">
-                                                <table className="w-full">
-                                                    {Review.map((item: Review) => (
-                                                        <tbody key={item.id}>
-                                                            <tr>
-                                                                <td className={`min-w-[100px] px-2 py-3 text-start rounded-tl-lg ${ReviewTableStyle}`}>
-                                                                    review
-                                                                </td>
-                                                                <td className={`min-w-[300px] px-2 py-3 text-start ${ReviewTableStyle}`}>
-                                                                    <div className="flex items-start justify-between gap-1">
-                                                                        {item.review}
-                                                                    </div>
-                                                                </td>
-                                                                {/* EDIT REVIEW */}
-                                                                <td className={`text-start rounded-tr-lg ${ReviewTableStyle}`}>
-                                                                    <div className="flex items-center justify-center gap-1">
-                                                                        <ButtonSkyBorder
-                                                                        onClick={() => handleEditReview(item.id)}
-                                                                        >
-                                                                            <TbPencil />
-                                                                        </ButtonSkyBorder>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className={`min-w-[100px] px-2 py-3 text-start rounded-bl-lg ${ReviewTableStyle}`}>
-                                                                    Keterangan
-                                                                </td>
-                                                                <td className={`min-w-[300px] px-2 py-3 text-start flex flex-wrap gap-2 ${ReviewTableStyle}`}>
-                                                                    <p>
-                                                                        {item.keterangan}
-                                                                    </p>
-                                                                    <p className="font-bold">
-                                                                        {`( ${item.nama_pegawai} )`}
-                                                                    </p>
-                                                                </td>
-                                                                {/* HAPUS REVIEW */}
-                                                                <td className={`text-start rounded-br-lg ${ReviewTableStyle}`}>
-                                                                    <div className="flex items-center justify-center gap-1"
-                                                                        onClick={() => {
-                                                                            AlertQuestion("Hapus?", "Hapus Review", "question", "Hapus", "Batal").then((result) => {
-                                                                                if (result.isConfirmed) {
-                                                                                    hapusReview(item.id);
-                                                                                }
-                                                                            });
-                                                                        }}>
-                                                                        <ButtonRedBorder><TbTrash /></ButtonRedBorder>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    ))}
-                                                </table>
-                                            </div>
-                                )}
+                                            Review.length == 0 ?
+                                                <div className="flex mt-2 text-center">
+                                                    <h1 className='text-center bg-white w-full border border-black rounded-lg p-2'>tidak ada review</h1>
+                                                </div>
+                                                :
+                                                <div className="flex mt-2">
+                                                    <table className="w-full">
+                                                        {Review.map((item: Review) => (
+                                                            <tbody key={item.id}>
+                                                                <tr>
+                                                                    <td className={`min-w-[100px] px-2 py-3 text-start rounded-tl-lg ${ReviewTableStyle}`}>
+                                                                        review
+                                                                    </td>
+                                                                    <td className={`min-w-[300px] px-2 py-3 text-start ${ReviewTableStyle}`}>
+                                                                        <div className="flex items-start justify-between gap-1">
+                                                                            {item.review}
+                                                                        </div>
+                                                                    </td>
+                                                                    {/* EDIT REVIEW */}
+                                                                    <td className={`text-start rounded-tr-lg ${ReviewTableStyle}`}>
+                                                                        <div className="flex items-center justify-center gap-1">
+                                                                            <ButtonSkyBorder
+                                                                                onClick={() => handleModalReview("edit", item.id)}
+                                                                            >
+                                                                                <TbPencil />
+                                                                            </ButtonSkyBorder>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td className={`min-w-[100px] px-2 py-3 text-start rounded-bl-lg ${ReviewTableStyle}`}>
+                                                                        Keterangan
+                                                                    </td>
+                                                                    <td className={`min-w-[300px] px-2 py-3 text-start flex flex-wrap gap-2 ${ReviewTableStyle}`}>
+                                                                        <p>
+                                                                            {item.keterangan}
+                                                                        </p>
+                                                                        <p className="font-bold">
+                                                                            {`( ${item.nama_pegawai} )`}
+                                                                        </p>
+                                                                    </td>
+                                                                    {/* HAPUS REVIEW */}
+                                                                    <td className={`text-start rounded-br-lg ${ReviewTableStyle}`}>
+                                                                        <button className="flex items-center justify-center gap-1"
+                                                                            disabled={ProsesHapusReview}
+                                                                            onClick={() => {
+                                                                                AlertQuestion("Hapus?", "Hapus Review", "question", "Hapus", "Batal").then((result) => {
+                                                                                    if (result.isConfirmed) {
+                                                                                        hapusReview(item.id);
+                                                                                    }
+                                                                                });
+                                                                            }}>
+                                                                            <ButtonRedBorder><TbTrash /></ButtonRedBorder>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        ))}
+                                                    </table>
+                                                </div>
+                                    )}
 
-                                {/* BUTTON REVIEW */}
-                                <div
-                                    className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white border-black hide-on-capture
-                                            ${tema.jenis_pohon === "Strategic" && 'border-white'}
-                                            ${tema.jenis_pohon === "Tactical" && 'border-white'}
-                                            ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
-                                        `}
-                                >
-                                    <ButtonSkyBorder
-                                    onClick={handleNewReview}
-                                    >
-                                        <TbBookmarkPlus className="mr-1" />
-                                        Tambah Review
-                                    </ButtonSkyBorder>
-                                    <button
-                                        className={`px-3 flex justify-center items-center py-1 rounded-lg border border-red-400 text-red-400 hover:bg-red-400 hover:text-white ${tema.jumlah_review > 0 && "bg-yellow-200 animate-pulse"}`}
-                                        onClick={() => {
-                                            setShowReview((prev) => (!prev));
-                                            if (!ShowReview) {
-                                                fetchReview(tema.id);
-                                            }
-                                        }}
-                                    >
-                                        <TbZoom className="mr-1" />
-                                        <p>{ShowReview ? "sembunyikan review" : "tampilkan review"} : {tema.jumlah_review}</p>
-                                    </button>
-                                    {/* MODAL TAMBAH REVIEW POHON */}
-                                    <ModalReview
-                                        jenis={'tambah'}
-                                        pokin="pemda"
-                                        isOpen={IsNewReview}
-                                        onClose={() => {
-                                            setIsNewReview(false);
-                                            setIdReview(null);
-                                        }}
-                                        idPohon={tema.id}
-                                        onSuccess={() => {
-                                            fetchReview(tema.id);
-                                            setShowReview(true);
-                                        }}
-                                    />
-                                    {/* MODAL EDIT REVIEW POHON */}
-                                    {/* <ModalReview
-                                        jenis={'lama'}
-                                        pokin="pemda"
-                                        id={idReview}
-                                        isOpen={IsEditReview}
-                                        onClose={() => setIsEditReview(false)}
-                                        idPohon={tema.id}
-                                        onSuccess={() => {
-                                            fetchReview(tema.id);
-                                            setShowReview(true);
-                                        }}
-                                    /> */}
-                                </div>
-                                {/* BUTTON ACTION INSIDE BOX */}
-                                {user != 'reviewer' &&
+                                    {/* BUTTON REVIEW */}
                                     <div
                                         className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white border-black hide-on-capture
-                                                ${tema.jenis_pohon === "Strategic" && 'border-white'}
-                                                ${tema.jenis_pohon === "Tactical" && 'border-white'}
-                                                ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
-                                            `}
+                                                    ${tema.jenis_pohon === "Strategic" && 'border-white'}
+                                                    ${tema.jenis_pohon === "Tactical" && 'border-white'}
+                                                    ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
+                                                `}
                                     >
-                                        <React.Fragment>
-                                            {!['Strategic', 'Tactical', 'Operational', 'Operational N'].includes(tema.jenis_pohon) &&
-                                                <ButtonSkyBorder onClick={() => setEdit(true)}>
-                                                    <TbPencil className="mr-1" />
-                                                    Edit
-                                                </ButtonSkyBorder>
-                                            }
-                                            {tema.level_pohon !== 0 &&
-                                                <ButtonSky
-                                                    className='flex items-center gap-1'
-                                                // onClick={() => setIsCetak(true)}
-                                                >
-                                                    <TbPrinter />
-                                                    Cetak
-                                                </ButtonSky>
-                                            }
-                                            {tema.jenis_pohon === 'Tematik' &&
-                                                <>
-                                                    <button
-                                                        className={`border px-3 py-1 rounded-lg flex jutify-center items-center gap-1
-                                                        ${tema.is_active === false ?
-                                                                'border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
-                                                                :
-                                                                'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
-                                                            }    
+                                        <ButtonSkyBorder
+                                            onClick={() => handleModalReview("tambah", null)}
+                                        >
+                                            <TbBookmarkPlus className="mr-1" />
+                                            Tambah Review
+                                        </ButtonSkyBorder>
+                                        <button
+                                            className={`px-3 flex justify-center items-center py-1 rounded-lg border border-red-400 text-red-400 hover:bg-red-400 hover:text-white ${tema.jumlah_review > 0 && "bg-yellow-200 animate-pulse"}`}
+                                            onClick={() => {
+                                                setShowReview((prev) => (!prev));
+                                                if (!ShowReview) {
+                                                    fetchReview(tema.id);
+                                                }
+                                            }}
+                                        >
+                                            <TbZoom className="mr-1" />
+                                            <p>{ShowReview ? "sembunyikan review" : "tampilkan review"} : {tema.jumlah_review}</p>
+                                        </button>
+                                        {/* MODAL TAMBAH REVIEW POHON */}
+                                        <ModalReview
+                                            jenis={JenisModalReview}
+                                            pokin="pemda"
+                                            id={idReview}
+                                            isOpen={ModalReviewOpen}
+                                            onClose={() => {
+                                                setModalReviewOpen(false);
+                                                setIdReview(null);
+                                            }}
+                                            idPohon={tema.id}
+                                            onSuccess={() => {
+                                                fetchReview(tema.id);
+                                                setShowReview(true);
+                                            }}
+                                        />
+                                    </div>
+                                    {/* BUTTON ACTION INSIDE BOX */}
+                                    {user != 'reviewer' &&
+                                        <div
+                                            className={`flex justify-evenly border my-3 py-3 rounded-lg bg-white border-black hide-on-capture
+                                                        ${tema.jenis_pohon === "Strategic" && 'border-white'}
+                                                        ${tema.jenis_pohon === "Tactical" && 'border-white'}
+                                                        ${(tema.jenis_pohon === "Operational" || tema.jenis_pohon === "Operational N") && 'border-white'}
                                                     `}
-                                                        onClick={() => {
-                                                            AlertQuestion(`${tema.is_active === true ? 'NON AKTIFKAN' : 'AKTIFKAN'}`, `${tema.is_active === false ? 'Aktifkan tematik?' : 'non aktifkan tematik'}`, "question", `${tema.is_active === false ? 'Aktifkan' : 'Non Aktifkan'}`, "Batal").then((result) => {
-                                                                if (result.isConfirmed) {
-                                                                    // AktifasiTematik(tema.id, tema.is_active);
-                                                                }
-                                                            });
-                                                        }}
+                                        >
+                                            <React.Fragment>
+                                                {!['Strategic', 'Tactical', 'Operational', 'Operational N'].includes(tema.jenis_pohon) &&
+                                                    <ButtonSkyBorder onClick={() => setEdit(true)}>
+                                                        <TbPencil className="mr-1" />
+                                                        Edit
+                                                    </ButtonSkyBorder>
+                                                }
+                                                {tema.level_pohon !== 0 &&
+                                                    <ButtonSky
+                                                        className='flex items-center gap-1'
+                                                    // onClick={() => setIsCetak(true)}
                                                     >
-                                                        {tema.is_active === false ? <TbCheck /> : <TbX />}
-                                                        {tema.is_active === false ? 'Aktifkan tematik' : 'Non Aktifkan tematik'}
-                                                    </button>
-                                                    <ButtonBlack
-                                                        className='flex justify-center items-center gap-1'
-                                                        onClick={() => setIsClone(true)}
+                                                        <TbPrinter />
+                                                        Cetak
+                                                    </ButtonSky>
+                                                }
+                                                {tema.jenis_pohon === 'Tematik' &&
+                                                    <>
+                                                        <button
+                                                            className={`border px-3 py-1 rounded-lg flex jutify-center items-center gap-1
+                                                                ${tema.is_active === false ?
+                                                                    'border-green-500 text-green-500 hover:bg-green-500 hover:text-white'
+                                                                    :
+                                                                    'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
+                                                                }    
+                                                            `}
+                                                            onClick={() => {
+                                                                AlertQuestion(`${tema.is_active === true ? 'NON AKTIFKAN' : 'AKTIFKAN'}`, `${tema.is_active === false ? 'Aktifkan tematik?' : 'non aktifkan tematik'}`, "question", `${tema.is_active === false ? 'Aktifkan' : 'Non Aktifkan'}`, "Batal").then((result) => {
+                                                                    if (result.isConfirmed) {
+                                                                        // AktifasiTematik(tema.id, tema.is_active);
+                                                                    }
+                                                                });
+                                                            }}
+                                                        >
+                                                            {tema.is_active === false ? <TbCheck /> : <TbX />}
+                                                            {tema.is_active === false ? 'Aktifkan tematik' : 'Non Aktifkan tematik'}
+                                                        </button>
+                                                        <ButtonBlack
+                                                            className='flex justify-center items-center gap-1'
+                                                            onClick={() => setIsClone(true)}
+                                                        >
+                                                            <TbCopy />
+                                                            Clone
+                                                        </ButtonBlack>
+                                                        {/* <ModalClone
+                                                                jenis="pemda"
+                                                                isOpen={IsClone}
+                                                                onClose={() => setIsClone(false)}
+                                                                nama_pohon={tema.tema}
+                                                                tahun={tahun || "0"}
+                                                                id={tema.id}
+                                                                kode_opd=''
+                                                                onSuccess={deleteTrigger}
+                                                            /> */}
+                                                    </>
+                                                }
+                                            </React.Fragment>
+                                            {tema.jenis_pohon !== 'Tematik' &&
+                                                <ButtonRedBorder
+                                                    onClick={() => {
+                                                        AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
+                                                            if (result.isConfirmed) {
+                                                                hapusPohon(tema.id);
+                                                            }
+                                                        });
+                                                    }}
+                                                >
+                                                    <TbTrash className='mr-1' />
+                                                    Hapus
+                                                </ButtonRedBorder>
+                                            }
+                                        </div>
+                                    }
+                                    {/* TOMBOL ADD POHON */}
+                                    {(
+                                        tema.jenis_pohon !== 'Operational Pemda' &&
+                                        tema.jenis_pohon !== 'Operational' &&
+                                        tema.jenis_pohon !== 'Operational N'
+                                    ) &&
+                                        <div className="flex flex-wrap gap-3 justify-evenly my-3 py-3 hide-on-capture">
+                                            <ButtonBlackBorder
+                                                className={`px-3 bg-white flex justify-center items-center py-1 bg-linear-to-r rounded-lg`}
+                                                onClick={handleShow}
+                                            >
+                                                <TbEye className='mr-1' />
+                                                {Show ? 'Sembunyikan' : 'Tampilkan'}
+                                            </ButtonBlackBorder>
+                                            {(Show && user != 'reviewer') &&
+                                                <>
+                                                    {/* TOMBOL ADD POHON SESUAI URUTAN AKARNYA */}
+                                                    {tema.level_pohon !== 3 &&
+                                                        <ButtonGreenBorder className={`px-3 bg-white flex justify-center items-center py-1 rounded-lg
+                                                        ${(tema.jenis_pohon === 'Strategic' || tema.jenis_pohon === 'Strategic Pemda') && 'border-[#3b82f6] hover:bg-[#3b82f6] text-[#3b82f6] hover:text-white'}    
+                                                    `}
+                                                            onClick={newChild}
+                                                        >
+                                                            <TbCirclePlus className='mr-1' />
+                                                            {tambahPohonName(tema.jenis_pohon)}
+                                                        </ButtonGreenBorder>
+                                                    }
+                                                    {/* AMBIL POHON MULAI DARI STRATEGIC DARI OPD */}
+                                                    <ButtonGreenBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-linear-to-r border-2 border-[#00A607] hover:bg-[#00A607] text-[#00A607] hover:text-white rounded-lg`}
+                                                        onClick={newPutChild}
                                                     >
-                                                        <TbCopy />
-                                                        Clone
-                                                    </ButtonBlack>
-                                                    {/* <ModalClone
-                                                        jenis="pemda"
-                                                        isOpen={IsClone}
-                                                        onClose={() => setIsClone(false)}
-                                                        nama_pohon={tema.tema}
-                                                        tahun={tahun || "0"}
-                                                        id={tema.id}
-                                                        kode_opd=''
-                                                        onSuccess={deleteTrigger}
-                                                    /> */}
+                                                        <TbArrowGuide className='mr-1' />
+                                                        {"(Ambil)"} {ambilPohonName(tema.jenis_pohon)}
+                                                    </ButtonGreenBorder>
+                                                    {/* TOMBOL ADD KHUSUS STRATEGIC KOTA  */}
+                                                    {(tema.level_pohon === 0 || tema.level_pohon === 1 || tema.level_pohon === 2 || tema.level_pohon === 3) &&
+                                                        <ButtonRedBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-linear-to-r border-2 rounded-lg`}
+                                                            onClick={newStrategic}
+                                                        >
+                                                            <TbCirclePlus className='mr-1' />
+                                                            Strategic
+                                                        </ButtonRedBorder>
+                                                    }
                                                 </>
                                             }
-                                        </React.Fragment>
-                                        {tema.jenis_pohon !== 'Tematik' &&
-                                            <ButtonRedBorder
-                                                onClick={() => {
-                                                    AlertQuestion("Hapus?", "DATA POHON yang terkait kebawah jika ada akan terhapus juga", "question", "Hapus", "Batal").then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            if (tema.jenis_pohon === 'Tematik' || 'SubTematik' || 'SubSubTematik' || 'SuperSubTematik') {
-                                                                // hapusSubTematik(tema.id);
-                                                            } else {
-                                                                // hapusPohonOpd(tema.id);
-                                                            }
-                                                        }
-                                                    });
-                                                }}
-                                            >
-                                                <TbTrash className='mr-1' />
-                                                Hapus
-                                            </ButtonRedBorder>
-                                        }
-                                    </div>
-                                }
-                                {/* TOMBOL ADD POHON */}
-                                {(
-                                    tema.jenis_pohon !== 'Operational Pemda' &&
-                                    tema.jenis_pohon !== 'Operational' &&
-                                    tema.jenis_pohon !== 'Operational N'
-                                ) &&
-                                    <div className="flex flex-wrap gap-3 justify-evenly my-3 py-3 hide-on-capture">
-                                        <ButtonBlackBorder
-                                            className={`px-3 bg-white flex justify-center items-center py-1 bg-linear-to-r rounded-lg`}
-                                            onClick={handleShow}
-                                        >
-                                            <TbEye className='mr-1' />
-                                            {Show ? 'Sembunyikan' : 'Tampilkan'}
-                                        </ButtonBlackBorder>
-                                        {(Show && user != 'reviewer') &&
-                                            <>
-                                                {/* TOMBOL ADD POHON SESUAI URUTAN AKARNYA */}
-                                                {tema.level_pohon !== 3 &&
-                                                    <ButtonGreenBorder className={`px-3 bg-white flex justify-center items-center py-1 rounded-lg
-                                                ${(tema.jenis_pohon === 'Strategic' || tema.jenis_pohon === 'Strategic Pemda') && 'border-[#3b82f6] hover:bg-[#3b82f6] text-[#3b82f6] hover:text-white'}    
-                                            `}
-                                                        onClick={newChild}
-                                                    >
-                                                        <TbCirclePlus className='mr-1' />
-                                                        {tambahPohonName(tema.jenis_pohon)}
-                                                    </ButtonGreenBorder>
-                                                }
-                                                {/* AMBIL POHON MULAI DARI STRATEGIC DARI OPD */}
-                                                <ButtonGreenBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-linear-to-r border-2 border-[#00A607] hover:bg-[#00A607] text-[#00A607] hover:text-white rounded-lg`}
-                                                    onClick={newPutChild}
-                                                >
-                                                    <TbArrowGuide className='mr-1' />
-                                                    {"(Ambil)"} {ambilPohonName(tema.jenis_pohon)}
-                                                </ButtonGreenBorder>
-                                                {/* TOMBOL ADD KHUSUS STRATEGIC KOTA  */}
-                                                {(tema.level_pohon === 0 || tema.level_pohon === 1 || tema.level_pohon === 2 || tema.level_pohon === 3) &&
-                                                    <ButtonRedBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-linear-to-r border-2 rounded-lg`}
-                                                        onClick={newStrategic}
-                                                    >
-                                                        <TbCirclePlus className='mr-1' />
-                                                        Strategic
-                                                    </ButtonRedBorder>
-                                                }
-                                            </>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </>
+                                        </div>
+                                    }
+                                </div>
+                            </>
+                        }
                         <ul style={{ display: Show ? '' : 'none' }}>
                             {childPohons.map((dahan: any, index: any) => (
                                 <React.Fragment key={index}>
@@ -505,32 +522,34 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                             ))}
                             {/* FORM POHON */}
                             {formList.map((formId: number) => (
-                                <React.Fragment key={formId}>
-                                    {/* <FormPohonPemda
+                                <li key={formId}>
+                                    <FormPohonPemda
                                         level={tema.level_pohon}
                                         id={tema.id}
                                         key={formId}
                                         formId={formId}
-                                        pokin={'pemda'}
+                                        jenis="tambah"
                                         onCancel={() => setFormList(formList.filter((id) => id !== formId))}
-                                    /> */}
-                                </React.Fragment>
+                                        EditBerhasil={() => null}
+                                    />
+                                </li>
                             ))}
                             {/* FORM STRATEGIC */}
                             {FormStrategic.map((formIdStrategic: number) => (
-                                <React.Fragment key={formIdStrategic}>
-                                    {/* <FormPohonPemda
+                                <li key={formIdStrategic}>
+                                    <FormPohonPemda
                                         level={3}
                                         id={tema.id}
                                         key={formIdStrategic}
                                         formId={formIdStrategic}
-                                        pokin={'pemda'}
+                                        jenis='tambah'
                                         onCancel={() => setFormStrategic(FormStrategic.filter((id) => id !== formIdStrategic))}
-                                    /> */}
-                                </React.Fragment>
+                                        EditBerhasil={() => null}
+                                    />
+                                </li>
                             ))}
                             {PutList.map((formId: number) => (
-                                <React.Fragment key={formId}>
+                                <li key={formId}>
                                     {/* <FormAmbilPohon
                                         level={tema.level_pohon}
                                         id={tema.id}
@@ -538,7 +557,7 @@ export const Pohon: React.FC<pohon> = ({ tema, tahun, deleteTrigger, user, show_
                                         formId={formId}
                                         onCancel={() => setPutList(PutList.filter((id) => id !== formId))}
                                     /> */}
-                                </React.Fragment>
+                                </li>
                             ))}
                         </ul>
                     </li>

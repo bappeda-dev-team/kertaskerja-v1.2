@@ -1,6 +1,6 @@
 'use client'
 
-// import Table from './comp/Table';
+import Table from './comp/Table';
 import { Breadcrumbs } from '@/components/ui/breadcrumb';
 
 const MasterPeriode = () => {
@@ -13,7 +13,7 @@ const MasterPeriode = () => {
     return (
         <>
             <Breadcrumbs items={menu} />
-            {/* <Table /> */}
+            <Table />
         </>
     )
 }

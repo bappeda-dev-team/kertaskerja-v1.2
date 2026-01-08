@@ -35,8 +35,9 @@ export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, 
 
     useEffect(() => {
         const fetchDetailReview = async () => {
+            setIsLoading(true);
             if (!id) return;
-            await apiFetch<any>(`${branding?.api_perencanaan}/program_kegiatan/findall`, {
+            await apiFetch<any>(`${branding?.api_perencanaan}/review_pokin/detail/${id}`, {
                 method: "GET",
             }).then((resp) => {
                 const data = resp.data;
@@ -68,12 +69,11 @@ export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, 
     };
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         let endpoint = "";
         if (jenis === "edit") {
-            endpoint = `review_pokin/update/${id}`;
+            endpoint = `${branding?.api_perencanaan}/review_pokin/update/${id}`;
         } else if (jenis === "tambah") {
-            endpoint = `review_pokin/create/${idPohon}`;
+            endpoint = `${branding?.api_perencanaan}/review_pokin/create/${idPohon}`;
         } else {
             endpoint = '';
         }

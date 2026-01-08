@@ -1,8 +1,8 @@
 'use client'
 
-import { ButtonGreenBorder, ButtonRedBorder, ButtonSkyBorder } from "@/components/ui/button";
+import { ButtonBlackBorder, ButtonGreenBorder, ButtonRedBorder, ButtonSkyBorder } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
-import { TbCirclePlus, TbPencil, TbPencilDown, TbTrash } from "react-icons/tb";
+import { TbCirclePlus, TbPencil, TbPencilDown, TbTrash, TbLayersSubtract } from "react-icons/tb";
 import { LoadingButton, LoadingClock } from "@/lib/loading";
 import { AlertNotification, AlertQuestion } from "@/lib/alert";
 import { useRouter } from "next/navigation";
@@ -92,7 +92,7 @@ export const TablePerencanaan = () => {
                         <h1 className="font-bold text-2xl uppercase text-green-500">{branding?.tahun?.label}</h1>
                     </div>
                     <ButtonSkyBorder
-                        className="flex items-center justify-center"
+                        className="flex items-center justify-center w-full"
                         onClick={() => handleModalRekin("", "baru")}
                     >
                         <TbCirclePlus className="mr-1" />
@@ -138,7 +138,7 @@ export const TablePerencanaan = () => {
                                         <>
                                             {data.indikator.length > 1 ?
                                                 <td className="border-r border-b text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
+                                                    {data.indikator.map((item: indikator, index: number) => (
                                                         <div key={index}>
                                                             {item.nama_indikator ?
                                                                 <div className={`flex items-center justify-between gap-2 py-4 px-6 ${index !== data.indikator.length - 1 && 'border-b'}`}>
@@ -158,7 +158,7 @@ export const TablePerencanaan = () => {
                                                 </td>
                                                 :
                                                 <td className="border-r border-b text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
+                                                    {data.indikator.map((item: indikator, index: number) => (
                                                         <div key={index}>
                                                             {item.nama_indikator ?
                                                                 <div className={`flex items-center justify-between gap-2 py-4 px-6`}>
@@ -179,10 +179,10 @@ export const TablePerencanaan = () => {
                                             }
                                             {data.indikator.length > 1 ?
                                                 <td className="border-r border-b text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
+                                                    {data.indikator.map((item: indikator, index: number) => (
                                                         <React.Fragment key={index}>
                                                             {item.targets ?
-                                                                item.targets.map((t: any) => (
+                                                                item.targets.map((t: target) => (
                                                                     <p key={t.id_target} className={`${index !== data.indikator.length - 1 && "border-b"} py-4 px-6`}>
                                                                         {t.target ? t.target : "-"} / {t.satuan ? t.satuan : "-"}
                                                                     </p>
@@ -195,10 +195,10 @@ export const TablePerencanaan = () => {
                                                 </td>
                                                 :
                                                 <td className="border-r border-b px-6 py-4 text-center">
-                                                    {data.indikator.map((item: any, index: number) => (
+                                                    {data.indikator.map((item: indikator, index: number) => (
                                                         <React.Fragment key={index}>
                                                             {item.targets ?
-                                                                item.targets.map((t: any) => (
+                                                                item.targets.map((t: target) => (
                                                                     <p key={t.id_target}>
                                                                         {t.target ? t.target : "-"} / {t.satuan ? t.satuan : "-"}
                                                                     </p>
@@ -251,12 +251,12 @@ export const TablePerencanaan = () => {
                                                     });
                                                 }}
                                             >
-                                                {Proses ? 
+                                                {Proses ?
                                                     <>
                                                         <LoadingButton />
                                                         Menghapus
                                                     </>
-                                                :
+                                                    :
                                                     <>
                                                         <TbTrash className="mr-1" />
                                                         Hapus
