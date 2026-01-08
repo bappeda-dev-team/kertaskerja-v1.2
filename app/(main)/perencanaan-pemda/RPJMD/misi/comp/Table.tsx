@@ -47,7 +47,7 @@ const Table = () => {
     useEffect(() => {
         const getMisi = async () => {
             setLoading(true);
-            await apiFetch<GetResponseGlobal<GetResponseFindallMisi[]>>(`${branding?.api_perencanaan}/misi_pemda/findall/tahun/${branding?.tahun?.value}/jenisperiode/RPJMD`, {
+            await apiFetch<GetResponseGlobal<GetResponseFindallMisi[]>>(`${branding?.api_perencanaan}/misi_pemda/findall/tahun/${branding?.tahun?.value}/jenisperiode/${Periode?.value}`, {
                 method: "GET",
             }).then((resp) => {
                 const data = resp.data;
@@ -65,7 +65,7 @@ const Table = () => {
             })
         }
         getMisi();
-    }, [branding, FetchTrigger]);
+    }, [branding, FetchTrigger, Periode]);
 
     const hapusData = async (id: any) => {
         setProses(true);
@@ -122,85 +122,89 @@ const Table = () => {
                             onChange={(option) => {
                                 setPeriode(option);
                             }}
-                            placeholder="pilih Jenis Periode ..."
+                            placeholder="pilih Jenis Periode"
                             value={Periode}
                             isSearchable
                         />
                     </HeaderCard>
-                    <div className="flex flex-wrap m-2">
-                        <div className="overflow-auto m-2 rounded-t-xl border border-gray-200 w-full">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="bg-emerald-500 text-white">
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[50px] text-center">No</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Visi/Misi</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 w-[200px]">Periode</th>
-                                        <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Keterangan</th>
-                                        <th className="border-l border-b border-gray-200 px-6 py-3 w-[100px]">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {Data === null ?
-                                        <tr>
-                                            <td className="px-6 py-3" colSpan={30}>
-                                                Data Kosong / Belum Ditambahkan
-                                                <ButtonSkyBorder
-                                                    className='mt-1 flex items-center gap-1'
-                                                    onClick={() => handleModal("tambah", null)}
-                                                >
-                                                    <TbCirclePlus />
-                                                    Tambah Visi
-                                                </ButtonSkyBorder>
-                                            </td>
+                    {Periode ?
+                        <div className="flex flex-wrap m-2">
+                            <div className="overflow-auto m-2 rounded-t-xl border border-gray-200 w-full">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="bg-emerald-500 text-white">
+                                            <th className="border-r border-b border-gray-200 px-6 py-3 w-[50px] text-center">No</th>
+                                            <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Visi/Misi</th>
+                                            <th className="border-r border-b border-gray-200 px-6 py-3 w-[200px]">Periode</th>
+                                            <th className="border-r border-b border-gray-200 px-6 py-3 min-w-[200px]">Keterangan</th>
+                                            <th className="border-l border-b border-gray-200 px-6 py-3 w-[100px]">Aksi</th>
                                         </tr>
-                                        :
-                                        Data.map((data: GetResponseFindallMisi, index: number) => {
-                                            return (
-                                                <React.Fragment key={index}>
-                                                    <tr>
-                                                        <td className="border border-emerald-500 px-4 py-4 text-center bg-slate-200 font-semibold">{index + 1}</td>
-                                                        <td className="border-x border-b border-emerald-500 px-6 py-4 bg-slate-200 font-semibold" colSpan={30}>Visi : {data.visi || "-"}</td>
-                                                    </tr>
-                                                    {data.misi_pemda.map((item: Misi) => (
-                                                        <React.Fragment key={item.id}>
-                                                            <tr>
-                                                                <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}.{item.urutan}</td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-4">{item.misi}</td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.tahun_akhir_periode ? `${item.tahun_awal_periode} - ${item.tahun_akhir_periode} (${item.jenis_periode})` : "-"}</td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || "-"}</td>
-                                                                <td className="border-x border-b border-emerald-500 px-6 py-4">
-                                                                    <div className="flex flex-col justify-center items-center gap-2">
-                                                                        <ButtonSkyBorder
-                                                                            className="flex items-center gap-1 w-full"
-                                                                            onClick={() => handleModal("edit", item)}
-                                                                        >
-                                                                            <TbPencil />
-                                                                            Edit
-                                                                        </ButtonSkyBorder>
-                                                                        <ButtonRedBorder className="flex items-center gap-1 w-full" onClick={() => {
-                                                                            AlertQuestion("Hapus?", `Hapus Misi "${item.misi || "yang dipilih"}" ?`, "question", "Hapus", "Batal").then((result) => {
-                                                                                if (result.isConfirmed) {
-                                                                                    hapusData(item.id);
-                                                                                }
-                                                                            });
-                                                                        }}
-                                                                        >
-                                                                            <TbTrash />
-                                                                            Hapus
-                                                                        </ButtonRedBorder>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </React.Fragment>
-                                                    ))}
-                                                </React.Fragment>
-                                            );
-                                        })
-                                    }
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {Data === null ?
+                                            <tr>
+                                                <td className="px-6 py-3" colSpan={30}>
+                                                    Data Kosong / Belum Ditambahkan
+                                                    <ButtonSkyBorder
+                                                        className='mt-1 flex items-center gap-1'
+                                                        onClick={() => handleModal("tambah", null)}
+                                                    >
+                                                        <TbCirclePlus />
+                                                        Tambah Visi
+                                                    </ButtonSkyBorder>
+                                                </td>
+                                            </tr>
+                                            :
+                                            Data.map((data: GetResponseFindallMisi, index: number) => {
+                                                return (
+                                                    <React.Fragment key={index}>
+                                                        <tr>
+                                                            <td className="border border-emerald-500 px-4 py-4 text-center bg-slate-200 font-semibold">{index + 1}</td>
+                                                            <td className="border-x border-b border-emerald-500 px-6 py-4 bg-slate-200 font-semibold" colSpan={30}>Visi : {data.visi || "-"}</td>
+                                                        </tr>
+                                                        {data.misi_pemda.map((item: Misi) => (
+                                                            <React.Fragment key={item.id}>
+                                                                <tr>
+                                                                    <td className="border border-emerald-500 px-4 py-4 text-center">{index + 1}.{item.urutan}</td>
+                                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">{item.misi}</td>
+                                                                    <td className="border-x border-b border-emerald-500 px-6 py-4 text-center">{item.tahun_akhir_periode ? `${item.tahun_awal_periode} - ${item.tahun_akhir_periode} (${item.jenis_periode})` : "-"}</td>
+                                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">{item.keterangan || "-"}</td>
+                                                                    <td className="border-x border-b border-emerald-500 px-6 py-4">
+                                                                        <div className="flex flex-col justify-center items-center gap-2">
+                                                                            <ButtonSkyBorder
+                                                                                className="flex items-center gap-1 w-full"
+                                                                                onClick={() => handleModal("edit", item)}
+                                                                            >
+                                                                                <TbPencil />
+                                                                                Edit
+                                                                            </ButtonSkyBorder>
+                                                                            <ButtonRedBorder className="flex items-center gap-1 w-full" onClick={() => {
+                                                                                AlertQuestion("Hapus?", `Hapus Misi "${item.misi || "yang dipilih"}" ?`, "question", "Hapus", "Batal").then((result) => {
+                                                                                    if (result.isConfirmed) {
+                                                                                        hapusData(item.id);
+                                                                                    }
+                                                                                });
+                                                                            }}
+                                                                            >
+                                                                                <TbTrash />
+                                                                                Hapus
+                                                                            </ButtonRedBorder>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </React.Fragment>
+                                                        ))}
+                                                    </React.Fragment>
+                                                );
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                        :
+                        <h1 className="p-5 m-5 font-bold border rounded-lg">❕ Pilih Jenis Periode terlebih dahulu</h1>
+                    }
                 </Card>
                 {ModalOpen &&
                     <ModalVisi
