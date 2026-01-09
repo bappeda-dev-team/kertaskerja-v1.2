@@ -141,17 +141,10 @@ const Table = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {Data === null ?
+                                        {Data.length === 0 ?
                                             <tr>
                                                 <td className="px-6 py-3" colSpan={30}>
                                                     Data Kosong / Belum Ditambahkan
-                                                    <ButtonSkyBorder
-                                                        className='mt-1 flex items-center gap-1'
-                                                        onClick={() => handleModal("tambah", null)}
-                                                    >
-                                                        <TbCirclePlus />
-                                                        Tambah Visi
-                                                    </ButtonSkyBorder>
                                                 </td>
                                             </tr>
                                             :
@@ -213,6 +206,7 @@ const Table = () => {
                         onSuccess={() => setFetchTrigger((prev) => !prev)}
                         Data={DataModal}
                         jenis={JenisModal}
+                        periode={Periode?.value || "RPJMD"}
                     />
                 }
             </>

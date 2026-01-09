@@ -47,7 +47,7 @@ const Table = () => {
     ]
 
     useEffect(() => {
-        const getLembaga = async () => {
+        const getVisi = async () => {
             setLoading(true);
             await apiFetch<GetResponseGlobal<GetResponseFindAllVisi[]>>(`${branding?.api_perencanaan}/visi_pemda/findall/tahun/${branding?.tahun?.value}/jenisperiode/${Periode?.value}`, {
                 method: "GET",
@@ -66,7 +66,7 @@ const Table = () => {
                 setLoading(false);
             })
         }
-        getLembaga();
+        getVisi();
     }, [branding, FetchTrigger, Periode]);
 
     const hapusData = async (id: any) => {

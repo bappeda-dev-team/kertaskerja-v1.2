@@ -8,7 +8,6 @@ import { AlertNotification } from "@/lib/alert";
 import { LoadingButton } from "@/lib/loading";
 import { Misi, FormValue, OptionVisi } from "../type";
 import { GetResponseGlobal } from "@/types";
-import { GetResponseFindallPeriode } from "@/app/(main)/datamaster/periode/type";
 import { apiFetch } from "@/hook/apiFetch";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { GetResponseFindAllVisi } from "../../visi/type";
@@ -19,10 +18,11 @@ interface modal {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
-    Data: Misi | null
+    Data: Misi | null;
+    periode: string;
 }
 
-export const ModalVisi: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, Data }) => {
+export const ModalVisi: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, Data, periode }) => {
 
     const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValue>({
         defaultValues: {
@@ -80,12 +80,12 @@ export const ModalVisi: React.FC<modal> = ({ isOpen, onClose, onSuccess, jenis, 
 
     const getOptionVisi = async () => {
         setLoadingOption(true);
-        await apiFetch<GetResponseGlobal<OptionVisi[]>>(`${branding?.api_perencanaan}/periode/findall`, {
+        await apiFetch<GetResponseGlobal<GetResponseFindAllVisi[]>>(`${branding?.api_perencanaan}/visi_pemda/findall/tahun/${branding?.tahun?.value}/jenisperiode/${periode}`, {
             method: "GET",
         }).then((resp) => {
             const data = resp.data;
             if (resp.code === 200) {
-                const visi = data.map((v: OptionVisi) => ({
+                const visi = data.map((v: GetResponseFindAllVisi) => ({
                     ...v,
                     value: v.id,
                     label: `${v.visi} (${v.tahun_awal_periode} - ${v.tahun_akhir_periode} ${v.jenis_periode})`,

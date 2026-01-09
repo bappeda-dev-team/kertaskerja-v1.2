@@ -3,7 +3,7 @@
 import Table from './comp/Table';
 import { Breadcrumbs } from '@/components/ui/breadcrumb';
 
-const MasterLembaga = () => {
+const VisiPemda = () => {
 
     const menu = [
         { label: "Perencanaan Pemda", href: "/" },
@@ -19,4 +19,4 @@ const MasterLembaga = () => {
     )
 }
 
-export default MasterLembaga;
+export default VisiPemda;
