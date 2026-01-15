@@ -479,8 +479,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                           <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tujuan Pemda</span>
                         </li>
                       </Link>
-                      <Link href="/sasaranpemda">
-                        <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/sasaranpemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <Link href="/perencanaan-pemda/RPJMD/sasaran-pemda">
+                        <li className={`flex items-center text-sm gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-pemda/RPJMD/sasaran-pemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                           <TbTarget className="text-xl" />
                           <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sasaran Pemda</span>
                         </li>

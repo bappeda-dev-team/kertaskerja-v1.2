@@ -237,9 +237,11 @@ const Table: React.FC<Table> = ({ Periode }) => {
                                                             </React.Fragment>
                                                         ))
                                                         :
-                                                        <td className="border-r border-b border-emerald-500 px-6 py-4 bg-red-400 text-white" colSpan={30}>
-                                                            Tujuan Pemda belum di buat
-                                                        </td>
+                                                        <tr>
+                                                            <td className="border-r border-b border-emerald-500 px-6 py-4 bg-red-400 text-white" colSpan={30}>
+                                                                Tujuan Pemda belum di buat
+                                                            </td>
+                                                        </tr>
                                                     }
                                                 </React.Fragment>
                                             );

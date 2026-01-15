@@ -1,3 +1,5 @@
+import { OptionType } from "@/types";
+
 export interface GetResponseFindallTujuanPemda {
     pokin_id: number;
     nama_tematik: string;
@@ -30,6 +32,31 @@ export interface Indikator {
 }
 
 export interface Target {
+    id: string;
+    target: string;
+    satuan: string;
+    tahun: string;
+}
+
+export interface FormValue {
+    id: number;
+    tujuan_pemda: string;
+    visi: OptionType;
+    misi: OptionType;
+    tema_id: number;
+    periode_id: number;
+    indikator: IndikatorForm[];
+}
+
+interface IndikatorForm {
+    id: string;
+    indikator: string;
+    rumus_perhitungan: string;
+    sumber_data: string;
+    target: TargetForm[];
+}
+
+interface TargetForm {
     id: string;
     target: string;
     satuan: string;
