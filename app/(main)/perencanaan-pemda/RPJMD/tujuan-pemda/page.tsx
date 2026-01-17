@@ -66,6 +66,7 @@ const TujuanPemda = () => {
                             }}
                             isClearable
                             options={OptionPeriode}
+                            isLoading={LoadingOption}
                             onMenuOpen={() => {
                                 if (OptionPeriode.length === 0) {
                                     getOptionPeriode();
