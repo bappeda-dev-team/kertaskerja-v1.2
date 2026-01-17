@@ -485,8 +485,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                           <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sasaran Pemda</span>
                         </li>
                       </Link>
-                      <Link href="/ikupemda">
-                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/ikupemda" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                      <Link href="/perencanaan-pemda/RPJMD/iku">
+                        <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-pemda/RPJMD/iku" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                           <TbChartBar className="text-xl" />
                           <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKU</span>
                         </li>

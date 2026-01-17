@@ -1,6 +1,6 @@
 'use client'
 
-// import Table from './comp/Table';
+import Table from './comp/Table';
 import { useState } from 'react';
 import { GetResponseFindallPeriode } from '@/app/(main)/datamaster/periode/type';
 import { GetResponseGlobal } from '@/types';
@@ -76,11 +76,24 @@ const SasaranPemda = () => {
                             }}
                             placeholder="pilih Periode"
                             value={Periode}
+                            isLoading={LoadingOption}
                             isSearchable
                         />
                     </div>
                 </HeaderCard>
-                {/* <Table Periode={Periode ?? null}/> */}
+                {Periode ?
+                    <Table
+                        id_periode={Periode?.id || 0}
+                        tahun_awal={Periode?.tahun_awal ? Periode?.tahun_awal : ""}
+                        tahun_akhir={Periode?.tahun_akhir ? Periode?.tahun_akhir : ""}
+                        jenis={Periode?.jenis_periode ? Periode?.jenis_periode : ""}
+                        tahun_list={Periode?.tahun_list ? Periode?.tahun_list : []}
+                    />
+                    :
+                    <div className="m-5">
+                        <h1>Pilih Periode terlebih dahulu</h1>
+                    </div>
+                }
             </Card>
         </>
     )

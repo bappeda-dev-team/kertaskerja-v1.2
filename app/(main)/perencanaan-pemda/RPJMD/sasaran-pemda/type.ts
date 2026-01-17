@@ -36,7 +36,7 @@ export interface SubTematik {
     sasaran_pemda: SasaranPemda[];
 }
 
-export interface Sasaran {
+export interface GetResponseFindallSasaranPemda {
     tematik_id: number;
     nama_tematik: string;
     tahun: string;
