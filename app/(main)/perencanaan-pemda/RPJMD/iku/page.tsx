@@ -11,6 +11,7 @@ import { useBrandingContext } from '@/providers/BrandingProvider';
 import { apiFetch } from '@/hook/apiFetch';
 import { AlertNotification } from '@/lib/alert';
 import { setCookie } from '@/lib/cookie';
+import { Card, HeaderCard } from '@/components/ui/Card';
 
 const Misi = () => {
 
@@ -71,8 +72,8 @@ const Misi = () => {
     return (
         <>
             <Breadcrumbs items={menu} />
-            <div className="mt-3 rounded-xl shadow-lg border">
-                <div className="flex items-center justify-between border-b px-5 py-5">
+            <Card>
+                <HeaderCard>
                     <div className="flex flex-wrap items-end">
                         <h1 className="uppercase font-bold">Indikator Utama Pemda</h1>
                         <h1 className="uppercase font-bold ml-1">(Periode {Periode?.tahun_awal} - {Periode?.tahun_akhir})</h1>
@@ -100,7 +101,7 @@ const Misi = () => {
                             getOptionPeriode();
                         }}
                     />
-                </div>
+                </HeaderCard>
                 {Periode ?
                     <Table
                         id_periode={Periode?.id}
@@ -114,7 +115,7 @@ const Misi = () => {
                         <h1>Pilih Periode terlebih dahulu</h1>
                     </div>
                 }
-            </div>
+            </Card>
         </>
     )
 }

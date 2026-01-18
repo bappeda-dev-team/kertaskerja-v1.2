@@ -37,7 +37,6 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
     const { branding } = useBrandingContext();
 
     useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchSasaran = async () => {
             setLoading(true);
             try {
@@ -249,7 +248,7 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
                                                                                             onClick={() => {
                                                                                                 AlertQuestion("Hapus?", "Hapus Tujuan Pemda yang dipilih?", "question", "Hapus", "Batal").then((result: any) => {
                                                                                                     if (result.isConfirmed) {
-                                                                                                        // hapusData(s.id_sasaran_pemda);
+                                                                                                        hapusData(s.id_sasaran_pemda);
                                                                                                     }
                                                                                                 });
                                                                                             }}

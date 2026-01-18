@@ -1,7 +1,7 @@
 'use client'
 
 import Table from './comp/Table';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GetResponseFindallPeriode } from '@/app/(main)/datamaster/periode/type';
 import { GetResponseGlobal } from '@/types';
 import { useBrandingContext } from '@/providers/BrandingProvider';
@@ -9,6 +9,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumb';
 import { apiFetch } from '@/hook/apiFetch';
 import { AlertNotification } from '@/lib/alert';
 import { Card, HeaderCard } from '@/components/ui/Card';
+import { getPeriode } from '@/lib/cookie';
 import Select from 'react-select';
 
 const TujuanPemda = () => {
@@ -24,6 +25,22 @@ const TujuanPemda = () => {
     const [Periode, setPeriode] = useState<GetResponseFindallPeriode | null>(null);
     const [OptionPeriode, setOptionPeriode] = useState<GetResponseFindallPeriode[]>([]);
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
+
+    useEffect(() => {
+        const fetchPeriode = getPeriode();
+        if (fetchPeriode.periode) {
+            const data = {
+                value: fetchPeriode.periode.value,
+                label: fetchPeriode.periode.label,
+                id: fetchPeriode.periode.value,
+                tahun_awal: fetchPeriode.periode.tahun_awal,
+                tahun_akhir: fetchPeriode.periode.tahun_akhir,
+                jenis_periode: fetchPeriode.periode.jenis_periode,
+                tahun_list: fetchPeriode.periode.tahun_list
+            }
+            setPeriode(data);
+        }
+    }, []);
 
     const getOptionPeriode = async () => {
         setLoadingOption(true);
@@ -81,7 +98,7 @@ const TujuanPemda = () => {
                         />
                     </div>
                 </HeaderCard>
-                <Table Periode={Periode ?? null}/>
+                <Table Periode={Periode ?? null} />
             </Card>
         </>
     )
