@@ -1,4 +1,5 @@
 import { OptionType } from "@/types";
+import { Misi } from "../misi/type";
 
 export interface GetResponseFindallTujuanPemda {
     pokin_id: number;
@@ -48,17 +49,22 @@ export interface FormValue {
     indikator: IndikatorForm[];
 }
 
-interface IndikatorForm {
-    id: string;
+export interface IndikatorForm {
+    id_indikator?: string;
     indikator: string;
     rumus_perhitungan: string;
     sumber_data: string;
     target: TargetForm[];
 }
 
-interface TargetForm {
-    id: string;
+export interface TargetForm {
     target: string;
     satuan: string;
-    tahun: string;
+    tahun?: string;
+}
+
+export interface GetResponseMisiPemdaByIdVisi {
+    id_visi: number,
+    visi: string;
+    misi_pemda: Misi[];
 }

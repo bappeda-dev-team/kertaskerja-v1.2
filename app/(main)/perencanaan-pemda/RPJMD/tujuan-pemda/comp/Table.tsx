@@ -4,14 +4,13 @@ import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/lib/loading";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { GetResponseFindallTujuanPemda, TujuanPemda, Indikator, Target } from "../type";
-import { GetResponseGlobal, OptionTypeString } from "@/types";
+import { GetResponseGlobal } from "@/types";
 import { AlertNotification, AlertQuestion } from "@/lib/alert";
 import { apiFetch } from "@/hook/apiFetch";
 import { ButtonGreen, ButtonRed } from "@/components/ui/button";
 import { TbPencil, TbTrash, TbCirclePlus, TbX, TbArrowBadgeDownFilled } from "react-icons/tb";
-import { Card, HeaderCard } from "@/components/ui/Card";
 import { GetResponseFindallPeriode } from "@/app/(main)/datamaster/periode/type";
-import Select from 'react-select';
+import { ModalTujuanPemda } from "./ModalTujuanPemda";
 
 interface Table {
     Periode: GetResponseFindallPeriode | null;
@@ -254,16 +253,17 @@ const Table: React.FC<Table> = ({ Periode }) => {
                     :
                     <h1 className="p-5 m-5 font-bold border rounded-lg">❕ Pilih Periode terlebih dahulu</h1>
                 }
-                {/* {ModalOpen &&
-                    <ModalVisi
-                        isOpen={ModalOpen}
-                        onClose={() => handleModal("tambah", null)}
-                        onSuccess={() => setFetchTrigger((prev) => !prev)}
-                        Data={DataModal}
-                        jenis={JenisModal}
-                        periode={Periode?.value || "RPJMD"}
-                    />
-                } */}
+                <ModalTujuanPemda
+                    metode={JenisModal}
+                    tema_id={IdTema}
+                    tahun={branding?.tahun?.value || 0}
+                    tahun_list={Periode}
+                    periode={id_periode}
+                    jenis_periode={jenis}
+                    isOpen={isOpenNewTujuan}
+                    onClose={() => handleModalNewTujuan(0)}
+                    onSuccess={() => setFetchTrigger((prev) => !prev)}
+                />
             </>
         )
     }
