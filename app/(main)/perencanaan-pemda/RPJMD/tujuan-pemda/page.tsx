@@ -71,7 +71,7 @@ const TujuanPemda = () => {
             <Card>
                 <HeaderCard>
                     <div className="flex flex-wrap items-center justify-between gap-5 w-full">
-                        <h1 className="font-bold text-lg uppercase">Tujuan Pemda {branding?.tahun?.label || "tahun kosong"}</h1>
+                        <h1 className="font-bold text-lg uppercase">Tujuan Pemda ({Periode?.tahun_awal} - {Periode?.tahun_akhir})</h1>
                         <Select
                             styles={{
                                 control: (baseStyles) => ({
