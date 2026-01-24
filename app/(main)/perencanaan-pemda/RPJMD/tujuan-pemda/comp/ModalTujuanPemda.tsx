@@ -9,16 +9,16 @@ import Select from 'react-select';
 import { apiFetch } from "@/hook/apiFetch";
 import { GetResponseGlobal, OptionType } from "@/types";
 import { GetResponseFindAllVisi } from "../../visi/type";
-import { GetResponseMisiPemdaByIdVisi, FormValue } from "../type";
+import { GetResponseMisiPemdaByIdVisi, FormValue, TujuanPemda } from "../type";
 import { Misi } from "../../misi/type";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 
 interface modal {
     isOpen: boolean;
     onClose: () => void;
-    metode: 'lama' | 'baru';
-    id?: number; // id tujuan pemda
-    tema_id?: number; //id tematik
+    jenis: 'edit' | 'tambah';
+    Data: TujuanPemda | null;
+    tema_id?: number;
     periode: number; // id periode
     tahun: number;
     jenis_periode: string;
@@ -26,7 +26,7 @@ interface modal {
     onSuccess: () => void;
 }
 
-export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id, periode, jenis_periode, metode, tahun, tahun_list, onSuccess }) => {
+export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_id, periode, jenis_periode, jenis, tahun, tahun_list, onSuccess }) => {
 
     const { branding } = useBrandingContext();
 
@@ -61,7 +61,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
     useEffect(() => {
         const fetchDetailTujuan = async () => {
             try {
-                await apiFetch(`${branding?.api_perencanaan}/tujuan_pemda/detail/${id}`, {
+                await apiFetch(`${branding?.api_perencanaan}/tujuan_pemda/detail/${Data?.id}`, {
                 }).then((resp: any) => {
                     // console.log("option lembaga", resp)
                     const hasil = resp.data;
@@ -107,7 +107,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 console.log(err);
             }
         };
-        const fetchPokinBaru = async () => {
+        const fetchPokintambah = async () => {
             try {
                 await apiFetch(`${branding?.api_perencanaan}/pohon_kinerja/pokin_with_periode/${tema_id}/${jenis_periode}`, {
                 }).then((resp: any) => {
@@ -134,12 +134,12 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 console.log(err);
             }
         };
-        if (metode === 'lama' && isOpen) {
+        if (jenis === 'edit' && isOpen) {
             fetchDetailTujuan();
-        } else if (metode === "baru" && isOpen) {
-            fetchPokinBaru();
+        } else if (jenis === "tambah" && isOpen) {
+            fetchPokintambah();
         }
-    }, [id, branding, isOpen, metode, reset, replace, tahun, tema_id, jenis_periode]);
+    }, [Data, branding, isOpen, jenis, reset, replace, tahun, tema_id, jenis_periode]);
 
     const fetchVisiOption = async () => {
         setIsLoading(true);
@@ -189,10 +189,10 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
         const payload = {
             //key : value
-            ...(metode === "baru" ? {
+            ...(jenis === "tambah" ? {
                 tema_id: tema_id,
             } : {
-                id: id,
+                id: Data?.id,
             }),
             periode_id: periode,
             tujuan_pemda: TujuanPemda,
@@ -211,8 +211,8 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
         };
         try {
             setProses(true);
-            await apiFetch(metode === "baru" ? `${branding?.api_perencanaan}/tujuan_pemda/create` : `${branding?.api_perencanaan}/tujuan_pemda/update/${id}`, {
-                method: metode === "baru" ? "POST" : "PUT",
+            await apiFetch(jenis === "tambah" ? `${branding?.api_perencanaan}/tujuan_pemda/create` : `${branding?.api_perencanaan}/tujuan_pemda/update/${Data?.id}`, {
+                method: jenis === "tambah" ? "POST" : "PUT",
                 body: payload as any
             }).then(_ => {
                 AlertNotification("Berhasil", "Berhasil Menyimpan Data Tujuan Pemda", "success", 3000, true);
@@ -243,7 +243,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, id, tema_id
                 <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
                 <div className={`bg-white rounded-lg p-8 z-10 w-5/6 max-h-[80%] overflow-auto`}>
                     <div className="w-max-[500px] py-2 border-b">
-                        <h1 className="text-xl uppercase text-center">{metode === 'baru' ? "Tambah" : "Edit"} Tujuan Pemda</h1>
+                        <h1 className="text-xl uppercase text-center">{jenis === 'tambah' ? "Tambah" : "Edit"} Tujuan Pemda</h1>
                     </div>
                     <form
                         onSubmit={handleSubmit(onSubmit)}

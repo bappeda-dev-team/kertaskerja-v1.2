@@ -21,7 +21,9 @@ const Table: React.FC<Table> = ({ Periode }) => {
     const [Data, setData] = useState<GetResponseFindallTujuanPemda[]>([]);
     const [ModalOpen, setModalOpen] = useState<boolean>(false);
     const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
-    const [DataModal, setDataModal] = useState<GetResponseFindallTujuanPemda | null>(null);
+    const [DataModal, setDataModal] = useState<TujuanPemda | null>(null);
+    const [IdTema, setIdTema] = useState<number>(0);
+
 
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Error, setError] = useState<boolean | null>(null);
@@ -29,15 +31,17 @@ const Table: React.FC<Table> = ({ Periode }) => {
     const [Proses, setProses] = useState<boolean>(false);
     const { branding } = useBrandingContext();
 
-    const handleModal = (jenis: "tambah" | "edit", data: GetResponseFindallTujuanPemda | null) => {
+    const handleModal = (jenis: "tambah" | "edit", id_tema: number, data?: TujuanPemda | null) => {
         if (ModalOpen) {
             setModalOpen(false);
             setDataModal(null);
             setJenisModal("tambah");
+            setIdTema(id_tema);
         } else {
             setModalOpen(true);
-            setDataModal(data);
+            setDataModal(data ?? null);
             setJenisModal(jenis);
+            setIdTema(id_tema);
         }
     }
 
@@ -144,7 +148,7 @@ const Table: React.FC<Table> = ({ Periode }) => {
                                                         </td>
                                                         <td className="border-r border-b border-emerald-500 px-6 py-4" rowSpan={data.tujuan_pemda.length === 0 ? 2 : TotalRow}>
                                                             <div className="flex flex-col gap-2">
-                                                                {data.nama_tematik || "-"} - {data.tahun_pokin}
+                                                                {data.nama_tematik || "-"} - {data.tahun_pokin || branding?.tahun?.value}
                                                                 <div className="flex items center gap-1 border-t border-emerald-500 pt-3">
                                                                     <div className="flex flex-col justify-between  gap-2 h-full w-full">
                                                                         <button
@@ -154,7 +158,7 @@ const Table: React.FC<Table> = ({ Periode }) => {
                                                                                     :
                                                                                     "bg-red-500 text-white cursor-not-allowed"} 
                                                                                 `}
-                                                                            onClick={() => handleModal("tambah", data)}
+                                                                            onClick={() => handleModal("tambah", data.pokin_id)}
                                                                             disabled={data.is_active === false}
                                                                         >
                                                                             <div className="flex gap-1">
@@ -193,7 +197,7 @@ const Table: React.FC<Table> = ({ Periode }) => {
                                                                         <div className="flex flex-col justify-center items-center gap-2">
                                                                             <ButtonGreen
                                                                                 className="flex items-center gap-1 w-full"
-                                                                                onClick={() => handleModal("edit", data)}
+                                                                                onClick={() => handleModal("edit", 0, item)}
                                                                             >
                                                                                 <TbPencil />
                                                                                 Edit
@@ -253,17 +257,20 @@ const Table: React.FC<Table> = ({ Periode }) => {
                     :
                     <h1 className="p-5 m-5 font-bold border rounded-lg">❕ Pilih Periode terlebih dahulu</h1>
                 }
-                <ModalTujuanPemda
-                    metode={JenisModal}
-                    tema_id={IdTema}
-                    tahun={branding?.tahun?.value || 0}
-                    tahun_list={Periode}
-                    periode={id_periode}
-                    jenis_periode={jenis}
-                    isOpen={isOpenNewTujuan}
-                    onClose={() => handleModalNewTujuan(0)}
-                    onSuccess={() => setFetchTrigger((prev) => !prev)}
-                />
+                {ModalOpen &&
+                    <ModalTujuanPemda
+                        jenis={JenisModal}
+                        tema_id={IdTema}
+                        Data={DataModal || null}
+                        tahun={branding?.tahun?.value || 0}
+                        tahun_list={Periode?.tahun_list || []}
+                        periode={Periode?.id || 0}
+                        jenis_periode={Periode?.jenis_periode || ""}
+                        isOpen={ModalOpen}
+                        onClose={() => handleModal("tambah", 0)}
+                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                    />
+                }
             </>
         )
     }
