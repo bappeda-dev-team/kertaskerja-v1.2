@@ -12,6 +12,8 @@ import { GetResponseFindAllVisi } from "../../visi/type";
 import { GetResponseMisiPemdaByIdVisi, FormValue, TujuanPemda } from "../type";
 import { Misi } from "../../misi/type";
 import { useBrandingContext } from "@/providers/BrandingProvider";
+import { TbTrash } from "react-icons/tb";
+import { LoadingClip } from "@/lib/loading";
 
 interface modal {
     isOpen: boolean;
@@ -30,12 +32,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
 
     const { branding } = useBrandingContext();
 
-    const {
-        control,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm<FormValue>();
+    const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValue>();
 
     const [TujuanPemda, setTujuanPemda] = useState<string>('');
     const [NamaPohon, setNamaPohon] = useState<string>('');
@@ -47,6 +44,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
 
     const [Proses, setProses] = useState<boolean>(false);
     const [IsLoading, setIsLoading] = useState<boolean>(false);
+    const [LoadingDetail, setLoadingDetail] = useState<boolean>(false);
 
     const { fields, append, remove, replace } = useFieldArray({
         control,
@@ -61,6 +59,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
     useEffect(() => {
         const fetchDetailTujuan = async () => {
             try {
+                setLoadingDetail(true);
                 await apiFetch(`${branding?.api_perencanaan}/tujuan_pemda/detail/${Data?.id}`, {
                 }).then((resp: any) => {
                     // console.log("option lembaga", resp)
@@ -85,7 +84,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                         }
                         setMisi(misi);
                     }
-    
+
                     // Mapping data ke form dengan struktur yang sesuai
                     const indikatorData = hasil.indikator?.map((item: any) => ({
                         id: item.id,
@@ -97,18 +96,21 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                             satuan: t.satuan,
                         })),
                     })) || [];
-    
+
                     reset({ indikator: indikatorData });
-                    
+
                 }).catch(err => {
                     AlertNotification("Gagal", `${err}`, "error", 3000, true);
                 })
             } catch (err) {
                 console.log(err);
+            } finally {
+                setLoadingDetail(false);
             }
         };
         const fetchPokintambah = async () => {
             try {
+                setLoadingDetail(true);
                 await apiFetch(`${branding?.api_perencanaan}/pohon_kinerja/pokin_with_periode/${tema_id}/${jenis_periode}`, {
                 }).then((resp: any) => {
                     const hasil = resp.data;
@@ -132,6 +134,8 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                 })
             } catch (err) {
                 console.log(err);
+            } finally {
+                setLoadingDetail(false);
             }
         };
         if (jenis === 'edit' && isOpen) {
@@ -165,7 +169,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
     }
     const fetchMisiOption = async (id: number) => {
         setIsLoading(true);
-        await apiFetch<GetResponseGlobal<GetResponseMisiPemdaByIdVisi>>(`${branding?.api_perencanaan}/misi_pemda/findbyvisi${id}`, {
+        await apiFetch<GetResponseGlobal<GetResponseMisiPemdaByIdVisi>>(`${branding?.api_perencanaan}/misi_pemda/findbyvisi/${id}`, {
             method: "GET",
         }).then((resp) => {
             const data = resp.data.misi_pemda;
@@ -236,8 +240,18 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
 
     if (!isOpen) {
         return null;
+    } else if (LoadingDetail) {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black opacity-30"></div>
+                <div className={`bg-white rounded-lg p-8 z-10 w-5/6 max-h-[80%] overflow-auto`}>
+                    <div className="w-max-[500px] py-2 border-b">
+                        <LoadingClip />
+                    </div>
+                </div>
+            </div>
+        )
     } else {
-
         return (
             <div className="fixed inset-0 flex items-center justify-center z-50">
                 <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
@@ -362,12 +376,23 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                                 )}
                             />
                         </div>
-                        <label className="uppercase text-base font-bold text-gray-700 my-2">
-                            indikator Tujuan Pemda :
-                        </label>
                         {fields.map((field, index) => (
-                            <React.Fragment key={index}>
-                                <div className="flex flex-col bg-gray-300 my-2 py-2 px-2 rounded-lg">
+                            <div className="border border-sky-700 rounded-lg p-2 mt-2" key={index}>
+                                <div className="flex items-center gap-2">
+                                    <label className="uppercase text-base font-bold text-gray-700 my-2">
+                                        indikator Tujuan Pemda {index + 1}:
+                                    </label>
+                                    {index >= 0 && (
+                                        <ButtonRedBorder
+                                            type="button"
+                                            onClick={() => remove(index)}
+                                            className="border border-red-500 text-red-500 rounded-full p-1 hover:bg-red-500 hover:text-white"
+                                        >
+                                            <TbTrash />
+                                        </ButtonRedBorder>
+                                    )}
+                                </div>
+                                <div className="flex flex-col border my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.indikator`}
                                         control={control}
@@ -375,7 +400,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                                         render={({ field }) => (
                                             <div className="flex flex-col py-3">
                                                 <label className="uppercase text-xs font-bold text-gray-700 mb-2">
-                                                    Nama Indikator {index + 1} :
+                                                    Nama Indikator
                                                 </label>
                                                 <input
                                                     {...field}
@@ -386,7 +411,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                                         )}
                                     />
                                 </div>
-                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                <div className="flex flex-col border my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.rumus_perhitungan`}
                                         control={control}
@@ -405,7 +430,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                                         )}
                                     />
                                 </div>
-                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                <div className="flex flex-col border my-2 py-2 px-2 rounded-lg">
                                     <Controller
                                         name={`indikator.${index}.sumber_data`}
                                         control={control}
@@ -426,8 +451,8 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                                 </div>
                                 <div className="flex flex-wrap justify-between gap-1">
                                     {field.target.map((_, subindex) => (
-                                        <div key={`${index}-${subindex}`} className="flex flex-col py-1 px-3 border border-gray-200 rounded-lg">
-                                            <label className="text-base text-center text-gray-700">
+                                        <div key={`${index}-${subindex}`} className="flex flex-col py-1 px-3 border border-sky-700 rounded-lg">
+                                            <label className="font-bold text-center text-sky-700">
                                                 <p>{tahun_list[subindex]}</p>
                                             </label>
                                             <Controller
@@ -468,16 +493,7 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                                         </div>
                                     ))}
                                 </div>
-                                {index >= 0 && (
-                                    <ButtonRedBorder
-                                        type="button"
-                                        onClick={() => remove(index)}
-                                        className="w-[200px] mt-3"
-                                    >
-                                        Hapus
-                                    </ButtonRedBorder>
-                                )}
-                            </React.Fragment>
+                            </div>
                         ))}
                         <ButtonSkyBorder
                             className="mb-3 mt-3"

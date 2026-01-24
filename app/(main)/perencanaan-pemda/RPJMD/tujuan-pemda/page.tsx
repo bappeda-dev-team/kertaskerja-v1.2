@@ -9,7 +9,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumb';
 import { apiFetch } from '@/hook/apiFetch';
 import { AlertNotification } from '@/lib/alert';
 import { Card, HeaderCard } from '@/components/ui/Card';
-import { getPeriode } from '@/lib/cookie';
+import { getPeriode, setCookie } from '@/lib/cookie';
 import Select from 'react-select';
 
 const TujuanPemda = () => {
@@ -91,6 +91,7 @@ const TujuanPemda = () => {
                             }}
                             onChange={(option) => {
                                 setPeriode(option);
+                                setCookie("periode", JSON.stringify(option));
                             }}
                             placeholder="pilih Periode"
                             value={Periode}
