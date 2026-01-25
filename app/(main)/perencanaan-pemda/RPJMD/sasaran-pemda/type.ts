@@ -1,13 +1,15 @@
+import { OptionType } from "@/types";
 
 export interface Target {
-    id: string;
+    id?: string;
     target: string;
     satuan: string;
     tahun: string;
 }
 
 export interface Indikator {
-    id: string;
+    id_indikator?: string;
+    id?: string;
     indikator: string;
     rumus_perhitungan: string;
     sumber_data: string;
@@ -48,4 +50,12 @@ export interface Periode_Header {
     tahun_awal: string;
     tahun_akhir: string;
     tahun_list: string[];
+}
+
+export interface FormValue {
+    subtema_id: OptionType;
+    tujuan_pemda_id: OptionType;
+    sasaran_pemda: string;
+    periode_id: number;
+    indikator: Indikator[];
 }
