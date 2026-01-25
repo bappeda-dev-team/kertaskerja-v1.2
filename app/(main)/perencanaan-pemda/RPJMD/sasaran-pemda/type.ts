@@ -19,6 +19,7 @@ export interface Indikator {
 export interface Periode {
     tahun_awal: string;
     tahun_akhir: string;
+    jenis_periode?: string;
 }
 
 export interface SasaranPemda {
@@ -58,4 +59,12 @@ export interface FormValue {
     sasaran_pemda: string;
     periode_id: number;
     indikator: Indikator[];
+}
+
+export interface TujuanPemda {
+    id: number;
+    tujuan_pemda: string;
+    tematik_id: number;
+    nama_tematik: string;
+    periode: Periode;
 }

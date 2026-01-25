@@ -11,7 +11,7 @@ import { LoadingButton } from "@/lib/loading";
 import { apiFetch } from "@/hook/apiFetch";
 import { GetResponseGlobal } from "@/types";
 import { GetResponseFindallSasaranPemda, SasaranPemda, SubTematik, Periode, Indikator, Target } from "../type";
-// import { ModalSasaranPemda } from "./ModalSasaranPemda";
+import { ModalSasaranPemda } from "./ModalSasaranPemda";
 
 interface table {
     id_periode: number
@@ -31,10 +31,35 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [DataNull, setDataNull] = useState<boolean>(false);
 
+    const [ModalOpen, setModalOpen] = useState<boolean>(false);
+    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+    const [IdSasaran, setIdSasaran] = useState<number>(0);
+    const [IdSubTema, setIdSubTema] = useState<number>(0);
+    const [NamaPohon, setNamaPohon] = useState<string>('');
+    const [JenisPohon, setJenisPohon] = useState<string>('');
+
     const [Proses, setProses] = useState<boolean>(false);
     const [Show, setShow] = useState<{ [key: string]: boolean }>({});
 
     const { branding } = useBrandingContext();
+
+    const HandleModal = (jenis: "tambah" | "edit", id: number, nama_pohon: string, jenis_pohon: string, id_tema?: number) => {
+        if (ModalOpen) {
+            setModalOpen(false);
+            setNamaPohon('');
+            setJenisPohon('');
+            setIdSubTema(0);
+            setJenisModal(jenis);
+            setIdSasaran(id_tema || 0);
+        } else {
+            setModalOpen(true);
+            setNamaPohon(nama_pohon);
+            setJenisPohon(jenis_pohon)
+            setIdSubTema(id);
+            setJenisModal(jenis);
+            setIdSasaran(id_tema || 0);
+        }
+    }
 
     useEffect(() => {
         const fetchSasaran = async () => {
@@ -83,11 +108,11 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
 
     const hapusData = async (id: any) => {
         setProses(true);
-        await apiFetch(`${branding?.api_perencanaan}/visi_pemda/delete/${id}`, {
+        await apiFetch(`${branding?.api_perencanaan}/sasaran_pemda/delete/${id}`, {
             method: "DELETE",
         }).then(resp => {
             setFetchTrigger((prev) => !prev);
-            AlertNotification("Berhasil", "Visi Berhasil Dihapus", "success", 2000);
+            AlertNotification("Berhasil", "Sasaran Pemda Berhasil Dihapus", "success", 2000);
         }).catch(err => {
             AlertNotification("Gagal", `${err}`, "error", 3000, true);
         }).finally(() => {
@@ -180,7 +205,6 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
                                                 data.subtematik.map((item: SubTematik, index: number) => {
                                                     // Cek apakah item.tujuan_pemda ada
                                                     const hasSasaran = item.sasaran_pemda.length != 0;
-                                                    // const hasSasaranPemda = item.sasaranpemda != "";
                                                     const [sasaranLength, indikatorLength] = hasSasaran
                                                         ? [
                                                             item.sasaran_pemda.length + 1,
@@ -201,7 +225,6 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
                                                                         {item.is_active === false ?
                                                                             <button
                                                                                 className="flex justify-between gap-1 rounded-full p-1 bg-red-500 text-white cursor-not-allowed"
-                                                                                // onClick={() => handleModalNewSasaran(item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
                                                                                 disabled
                                                                             >
                                                                                 <div className="flex gap-1">
@@ -213,7 +236,7 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
                                                                             :
                                                                             <button
                                                                                 className="flex justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500"
-                                                                            // onClick={() => handleModalNewSasaran(item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
+                                                                                onClick={() => HandleModal("tambah", item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
                                                                             >
                                                                                 <div className="flex gap-1">
                                                                                     <TbCirclePlus />
@@ -238,7 +261,7 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
                                                                                     <>
                                                                                         <ButtonGreen
                                                                                             className="flex items-center gap-1 w-full"
-                                                                                        // onClick={() => handleModalEditSasaran(s.id_sasaran_pemda, item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
+                                                                                            onClick={() => HandleModal("edit", item.subtematik_id, item.nama_subtematik, item.jenis_pohon, s.id_sasaran_pemda)}
                                                                                         >
                                                                                             <TbPencil />
                                                                                             Edit
@@ -310,6 +333,22 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
                         </div>
                     );
                 })
+            }
+            {ModalOpen &&
+                < ModalSasaranPemda
+                    id={IdSasaran}
+                    jenis={JenisModal}
+                    subtema_id={IdSubTema}
+                    nama_pohon={NamaPohon}
+                    periode={id_periode}
+                    jenis_periode={jenis}
+                    jenis_pohon={JenisPohon}
+                    tahun={branding?.tahun?.value || 0}
+                    tahun_list={tahun_list}
+                    isOpen={ModalOpen}
+                    onClose={() => HandleModal("tambah", 0, '', '')}
+                    onSuccess={() => setFetchTrigger((prev) => !prev)}
+                />
             }
         </>
     )

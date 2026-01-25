@@ -12,7 +12,7 @@ import { GetResponseFindAllVisi } from "../../visi/type";
 import { GetResponseMisiPemdaByIdVisi, FormValue, TujuanPemda } from "../type";
 import { Misi } from "../../misi/type";
 import { useBrandingContext } from "@/providers/BrandingProvider";
-import { TbTrash } from "react-icons/tb";
+import { TbDeviceFloppy, TbTrash, TbX } from "react-icons/tb";
 import { LoadingClip } from "@/lib/loading";
 
 interface modal {
@@ -504,16 +504,22 @@ export const ModalTujuanPemda: React.FC<modal> = ({ isOpen, onClose, Data, tema_
                         </ButtonSkyBorder>
                         <ButtonSky className="w-full mt-3" type="submit" disabled={Proses}>
                             {Proses ?
-                                <span className="flex">
+                                <span className="flex items-center gap-1">
                                     <LoadingButton />
                                     Menyimpan...
                                 </span>
                                 :
-                                "Simpan"
+                                <span className="flex items-center gap-1">
+                                    <TbDeviceFloppy />
+                                    Simpan
+                                </span>
                             }
                         </ButtonSky>
                         <ButtonRed className="w-full my-2" onClick={handleClose}>
-                            Batal
+                            <span className="flex items-center gap-1">
+                                <TbX />
+                                Batal
+                            </span>
                         </ButtonRed>
                     </form>
                 </div>

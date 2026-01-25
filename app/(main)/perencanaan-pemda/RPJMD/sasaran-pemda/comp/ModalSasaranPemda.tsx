@@ -3,12 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { Controller, SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import { ButtonSky, ButtonRed, ButtonSkyBorder, ButtonRedBorder } from '@/components/ui/button';
-import { LoadingBeat, LoadingButton, LoadingSync } from "@/lib/loading";
+import { LoadingButton, LoadingSync, LoadingClip } from "@/lib/loading";
 import Select from 'react-select';
 import { AlertNotification, AlertQuestion } from "@/lib/alert";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { FormValue } from "../type";
 import { OptionType } from "@/types";
+import { apiFetch } from "@/hook/apiFetch";
+import { GetResponseGlobal } from "@/types";
+import { TujuanPemda } from "../../tujuan-pemda/type";
+import { TbTrash, TbDeviceFloppy, TbX } from "react-icons/tb";
 
 interface indikator {
     id_indikator?: string;
@@ -49,6 +53,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
 
     const [Proses, setProses] = useState<boolean>(false);
     const [Loading, setLoading] = useState<boolean>(false);
+    const [LoadingDetail, setLoadingDetail] = useState<boolean>(false);
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
     const [IdNotFound, setIdNotFound] = useState<boolean>(false);
     const [TujuanNotFound, setTujuanNotFound] = useState<boolean>(false);
@@ -64,20 +69,14 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
     };
 
     useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const fetchDetailasaranPemda = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(`${API_URL}/sasaran_pemda/detail/${id}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const result = await response.json();
-                if (result.code === 200 || result.code === 201) {
+            setLoadingDetail(true);
+            await apiFetch(`${branding?.api_perencanaan}/sasaran_pemda/detail/${id}`, {
+            }).then((resp: any) => {
+                if (resp.code === 200 || resp.code === 201) {
                     setIdNotFound(false);
                     setTujuanNotFound(false);
-                    const hasil = result.data;
+                    const hasil = resp.data;
                     if (hasil.sasaran_pemda) {
                         setSasaranPemda(hasil.sasaran_pemda);
                     }
@@ -104,20 +103,20 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
 
                     // Mengisi array field di react-hook-form
                     replace(indikatorData);
-                } else if (result.code === 400) {
+                } else if (resp.code === 400) {
                     setIdNotFound(true);
                     setTujuanNotFound(false);
-                } else if (result.code === 404) {
+                } else if (resp.code === 404) {
                     setIdNotFound(false);
                     setTujuanNotFound(true);
                 } else {
-                    console.log("error fetch", result);
+                    console.log("error fetch", resp);
                 }
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setLoading(false);
-            }
+            }).catch(err => {
+                AlertNotification("Gagal", `${err}`, "error", 3000, true);
+            }).finally(() => {
+                setLoadingDetail(false);
+            })
         };
         const sasaranPemdatambah = () => {
             reset({
@@ -126,41 +125,36 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                 }]
             });
         }
-        if (isOpen && jenis === 'edit') {
+        if (jenis === 'edit') {
             fetchDetailasaranPemda();
-        } else if (isOpen && jenis === 'tambah') {
+        } else if (jenis === 'tambah') {
             sasaranPemdatambah();
         }
-    }, [id, branding, isOpen, jenis, tahun, replace, reset]);
+    }, [id, branding, isOpen, jenis, tahun]);
 
     const fetchOptionTujuanPemda = async () => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         setLoadingOption(true);
-        try {
-            const response = await fetch(`${API_URL}/tujuan_pemda/findall/${tahun}/${jenis_periode}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (!response.ok) {
-                throw new Error('error fetch option tujuan pemda dengan response !ok');
+        await apiFetch<GetResponseGlobal<TujuanPemda[]>>(`${branding?.api_perencanaan}/tujuan_pemda/findall/${tahun}/${jenis_periode}`, {
+            method: "GET",
+        }).then((resp) => {
+            const data = resp.data;
+            if (resp.code === 200) {
+                const tujuan = data.map((item: TujuanPemda) => ({
+                    value: item.id,
+                    label: item.tujuan_pemda,
+                }));
+                setOptionTujuanPemda(tujuan);
+            } else {
+                setOptionTujuanPemda([]);
             }
-            const result = await response.json();
-            const hasil = result.data;
-            const data = hasil.map((item: any) => ({
-                value: item.id,
-                label: item.tujuan_pemda,
-            }));
-            setOptionTujuanPemda(data);
-        } catch (err) {
-            console.log('error saat fetch option tujuan pemda');
-        } finally {
+        }).catch(err => {
+            AlertNotification("Gagal", `${err}`, "error", 3000, true);
+        }).finally(() => {
             setLoadingOption(false);
-        }
+        })
     }
 
     const onSubmit: SubmitHandler<FormValue> = async (data) => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const formDataNew = {
             //key : value
             subtema_id: subtema_id,
@@ -201,43 +195,33 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
             if (jenis === "tambah") return formDataNew;
             return {}; // Default jika jenis tidak sesuai
         };
-        // jenis === 'tambah' && console.log("tambah :", formDataNew);
-        // jenis === 'edit' && console.log("edit :", formDataEdit);
         if (TujuanPemda?.value == null || TujuanPemda?.value == undefined) {
             AlertNotification("", "pilih Tujuan Pemda", "warning", 2000);
         } else if (SasaranPemda === '') {
             AlertNotification("", "Sasaran Pemda wajib Terisi", "warning", 2000);
         } else {
+            let url = "";
+            if (jenis === "edit") {
+                url = `sasaran_pemda/update/${id}`;
+            } else if (jenis === "tambah") {
+                url = `sasaran_pemda/create`;
+            } else {
+                url = '';
+            }
+            // jenis === 'tambah' && console.log("tambah :", formDataNew);
+            // jenis === 'edit' && console.log("edit :", formDataEdit);
             try {
-                let url = "";
-                if (jenis === "edit") {
-                    url = `sasaran_pemda/update/${id}`;
-                } else if (jenis === "tambah") {
-                    url = `sasaran_pemda/create`;
-                } else {
-                    url = '';
-                }
                 setProses(true);
-                const response = await fetch(`${API_URL}/${url}`, {
-                    method: jenis === 'edit' ? "PUT" : "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                await apiFetch(`${branding?.api_perencanaan}/${url}`, {
+                    method: jenis === "tambah" ? "POST" : "PUT",
                     body: JSON.stringify(getBody()),
-                });
-                const result = await response.json();
-                if (result.code === 200 || result.code === 201) {
-                    AlertNotification("Berhasil", `Berhasil ${jenis === 'tambah' ? "Menambahkan" : "Mengubah"} Sasaran Pemda`, "success", 1000);
-                    onClose();
+                }).then(_ => {
+                    AlertNotification("Berhasil", "Berhasil Menyimpan Data Sasaran  Pemda", "success", 3000, true);
                     onSuccess();
-                    reset();
-                } else if (result.code === 500) {
-                    // AlertNotification("Gagal", "Tujuan Pemda yang dipilih sudah digunakan untuk sasaran pemda lain", "error", 3000);
-                    AlertNotification("Gagal", `${result.data}`, "error", 3000);
-                    // console.log(result.data);
-                } else {
-                    AlertNotification("Gagal", "terdapat kesalahan pada backend / database server dengan response !ok", "error", 50000, true);
-                }
+                    handleClose();
+                }).catch(err => {
+                    AlertNotification("Gagal", `${err}`, "error", 3000, true);
+                })
             } catch (err) {
                 AlertNotification("Gagal", "cek koneksi internet/terdapat kesalahan pada database server", "error", 2000);
             } finally {
@@ -255,14 +239,24 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
 
     if (!isOpen) {
         return null;
+    } else if (LoadingDetail) {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black opacity-30"></div>
+                <div className={`bg-white rounded-lg p-8 z-10 w-5/6 max-h-[80%] overflow-auto`}>
+                    <div className="w-max-[500px] py-2 border-b">
+                        <LoadingClip />
+                    </div>
+                </div>
+            </div>
+        )
     } else {
-
         return (
             <div className="fixed inset-0 flex items-center justify-center z-50">
                 <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
                 <div className={`bg-white rounded-lg p-8 z-10 w-5/6 max-h-[80%] overflow-auto`}>
                     <div className="w-max-[500px] py-2 border-b">
-                        <h1 className="text-xl uppercase text-center">{jenis === 'tambah' ? "Tambah" : "Edit"} Sasaran Pemda</h1>
+                        <h1 className="text-xl uppercase text-center">{jenis} Sasaran Pemda {id ?? "tidak ada id"}</h1>
                     </div>
                     {Loading ?
                         <div className="mt-3">
@@ -358,12 +352,23 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                 )}
                                             />
                                         </div>
-                                        <label className="uppercase text-base font-bold text-gray-700 my-2">
-                                            indikator Sasaran Pemda :
-                                        </label>
                                         {fields.map((field, index) => (
-                                            <React.Fragment key={index}>
-                                                <div className="flex flex-col bg-gray-300 my-2 py-2 px-2 rounded-lg">
+                                            <div className="border border-sky-700 rounded-lg p-2 mt-2" key={index}>
+                                                <div className="flex items-center gap-2">
+                                                    <label className="uppercase text-base font-bold text-gray-700 my-2">
+                                                        indikator Sasaran Pemda {index + 1}:
+                                                    </label>
+                                                    {index >= 0 && (
+                                                        <ButtonRedBorder
+                                                            type="button"
+                                                            onClick={() => remove(index)}
+                                                            className="border border-red-500 text-red-500 rounded-full p-1 hover:bg-red-500 hover:text-white"
+                                                        >
+                                                            <TbTrash />
+                                                        </ButtonRedBorder>
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col border my-2 py-2 px-2 rounded-lg">
                                                     <Controller
                                                         name={`indikator.${index}.indikator`}
                                                         control={control}
@@ -382,7 +387,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                         )}
                                                     />
                                                 </div>
-                                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                                <div className="flex flex-col border my-2 py-2 px-2 rounded-lg">
                                                     <Controller
                                                         name={`indikator.${index}.rumus_perhitungan`}
                                                         control={control}
@@ -401,7 +406,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                         )}
                                                     />
                                                 </div>
-                                                <div key={index} className="flex flex-col border border-gray-200 my-2 py-2 px-2 rounded-lg">
+                                                <div className="flex flex-col border my-2 py-2 px-2 rounded-lg">
                                                     <Controller
                                                         name={`indikator.${index}.sumber_data`}
                                                         control={control}
@@ -422,8 +427,8 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                 </div>
                                                 <div className="flex flex-wrap justify-between gap-1">
                                                     {field.target.map((_, subindex) => (
-                                                        <div key={`${index}-${subindex}`} className="flex flex-col py-1 px-3 border border-gray-200 rounded-lg">
-                                                            <label className="text-base text-center text-gray-700">
+                                                        <div key={`${index}-${subindex}`} className="flex flex-col py-1 px-3 border border-sky-700 rounded-lg">
+                                                            <label className="font-bold text-center text-sky-700">
                                                                 <p>{tahun_list[subindex]}</p>
                                                             </label>
                                                             <Controller
@@ -464,16 +469,7 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                                         </div>
                                                     ))}
                                                 </div>
-                                                {index >= 0 && (
-                                                    <ButtonRedBorder
-                                                        type="button"
-                                                        onClick={() => remove(index)}
-                                                        className="w-[200px] mt-3"
-                                                    >
-                                                        Hapus
-                                                    </ButtonRedBorder>
-                                                )}
-                                            </React.Fragment>
+                                            </div>
                                         ))}
                                         <ButtonSkyBorder
                                             className="mb-3 mt-3"
@@ -485,17 +481,23 @@ export const ModalSasaranPemda: React.FC<modal> = ({ isOpen, onClose, id, tahun,
                                         {(!IdNotFound && !TujuanNotFound) &&
                                             <ButtonSky className="w-full mt-3" type="submit">
                                                 {Proses ?
-                                                    <span className="flex">
+                                                    <span className="flex items-center gap-1">
                                                         <LoadingButton />
                                                         Menyimpan...
                                                     </span>
                                                     :
-                                                    "Simpan"
+                                                    <span className="flex items-center gap-1">
+                                                        <TbDeviceFloppy />
+                                                        Simpan
+                                                    </span>
                                                 }
                                             </ButtonSky>
                                         }
                                         <ButtonRed className="w-full my-2" onClick={handleClose}>
-                                            Batal
+                                            <span className="flex items-center gap-1">
+                                                <TbX />
+                                                Batal
+                                            </span>
                                         </ButtonRed>
                                     </form>
                         )}
