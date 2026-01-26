@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm, useFieldArray, Control } from "react-hook-form";
-import { ButtonSky, ButtonSkyBorder, ButtonRed, ButtonRedBorder } from '@/components/ui/button';
+import { ButtonSky, ButtonSkyBorder, ButtonRed } from '@/components/ui/button';
 import { LoadingButton } from "@/lib/loading";
 import { IsuStrategis, DataDukung, TargetJumlahData } from "../type";
 import { PermasalahanOpd } from "../../permasalahan-opd/type";
