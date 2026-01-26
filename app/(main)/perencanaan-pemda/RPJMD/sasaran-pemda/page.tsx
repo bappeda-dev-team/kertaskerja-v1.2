@@ -32,7 +32,7 @@ const SasaranPemda = () => {
             const data = {
                 value: fetchPeriode.periode.value,
                 label: fetchPeriode.periode.label,
-                id: fetchPeriode.periode.value,
+                id: fetchPeriode.periode.id,
                 tahun_awal: fetchPeriode.periode.tahun_awal,
                 tahun_akhir: fetchPeriode.periode.tahun_akhir,
                 jenis_periode: fetchPeriode.periode.jenis_periode,

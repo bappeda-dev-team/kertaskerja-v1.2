@@ -1,27 +1,27 @@
 'use client'
 
-import Table from './comp/Table';
-import { useState, useEffect } from 'react';
-import { GetResponseFindallPeriode } from '@/app/(main)/datamaster/periode/type';
-import { GetResponseGlobal } from '@/types';
-import { useBrandingContext } from '@/providers/BrandingProvider';
-import { Breadcrumbs } from '@/components/ui/breadcrumb';
-import { apiFetch } from '@/hook/apiFetch';
-import { AlertNotification } from '@/lib/alert';
-import { Card, HeaderCard } from '@/components/ui/Card';
-import { getPeriode, setCookie } from '@/lib/cookie';
+import Table from "./comp/Table";
+import { useState, useEffect } from "react";
+import { apiFetch } from "@/hook/apiFetch";
+import { GetResponseGlobal } from "@/types";
+import { getPeriode, setCookie } from "@/lib/cookie";
+import { GetResponseFindallPeriode } from "@/app/(main)/datamaster/periode/type";
+import { AlertNotification } from "@/lib/alert";
+import { useBrandingContext } from "@/providers/BrandingProvider";
+import { OpdNull, TahunNull } from "@/components/ui/OpdTahunNull";
+import { Breadcrumbs } from "@/components/ui/breadcrumb";
 import Select from 'react-select';
 
-const TujuanPemda = () => {
+const TujuanOpdPage = () => {
 
     const menu = [
-        { label: "Perencanaan Pemda", href: "/" },
-        { label: "RPJMD", href: "/perencanaan-pemda/RPJMD/tujuan-pemda" },
-        { label: "Tujuan Pemda", href: "/perencanaan-pemda/RPJMD/tujuan-pemda", active: true }
+        { label: "Perencanaan OPD", href: "/" },
+        { label: "Renstra", href: "/" },
+        { label: "Tujuan OPD", href: "/perencanaan-opd/renstra/tujuan-opd", active: true }
     ]
 
     const { branding } = useBrandingContext();
-
+    const opd = branding?.user?.roles == "super_admin" ? branding?.opd?.value : branding?.user?.kode_opd;
     const [Periode, setPeriode] = useState<GetResponseFindallPeriode | null>(null);
     const [OptionPeriode, setOptionPeriode] = useState<GetResponseFindallPeriode[]>([]);
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
@@ -65,13 +65,29 @@ const TujuanPemda = () => {
         })
     }
 
-    return (
-        <>
-            <Breadcrumbs items={menu} />
-            <Card>
-                <HeaderCard>
-                    <div className="flex flex-wrap items-center justify-between gap-5 w-full">
-                        <h1 className="font-bold text-lg uppercase">Tujuan Pemda ({Periode?.tahun_awal} - {Periode?.tahun_akhir})</h1>
+    if ((branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') && (branding?.opd?.value === undefined || branding?.opd?.value === null)) {
+        return (
+            <OpdNull />
+        )
+    } else if (branding?.tahun?.value === undefined || branding?.tahun?.value === null) {
+        return (
+            <TahunNull />
+        )
+    }
+    else {
+        return (
+            <>
+                <Breadcrumbs items={menu} />
+                <div className="mt-3 rounded-xl shadow-lg border border-gray-200">
+                    <div className="flex flex-wrap items-center justify-between border-b border-gray-200 px-5 py-5">
+                        <div className="flex flex-col gap-1">
+                            <h1 className="font-bold text-lg uppercase">Tujuan OPD {`(${Periode?.tahun_awal || ""} - ${Periode?.tahun_akhir || ""})`}</h1>
+                            {(branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'reviewer') ?
+                                <h1 className="text-sm">{branding?.opd?.label || ''}</h1>
+                                :
+                                <h1 className="text-sm">{branding?.user?.nama_opd || ''}</h1>
+                            }
+                        </div>
                         <Select
                             styles={{
                                 control: (baseStyles) => ({
@@ -98,11 +114,28 @@ const TujuanPemda = () => {
                             isSearchable
                         />
                     </div>
-                </HeaderCard>
-                <Table Periode={Periode ?? null} />
-            </Card>
-        </>
-    )
+                    <div className="flex m-2">
+                        {Periode ?
+                            <div className="w-full">
+                                <Table 
+                                    kode_opd={opd}
+                                    id_periode={Periode?.id}
+                                    jenis_periode={Periode?.jenis_periode}
+                                    tahun_akhir={Periode?.tahun_akhir}
+                                    tahun_awal={Periode?.tahun_awal}
+                                    tahun_list={Periode?.tahun_list}
+                                    tipe="opd"
+                                />
+                            </div>
+                            :
+                            <h1 className="p-5">Pilih Periode Terlebih Dahulu</h1>
+                        }
+                    </div>
+                </div>
+            </>
+        )
+    }
+
 }
 
-export default TujuanPemda;
+export default TujuanOpdPage;
