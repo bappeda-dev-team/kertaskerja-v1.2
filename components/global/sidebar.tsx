@@ -131,15 +131,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRKPD(true);
     }
     //PERENCANAAN OPD
-    if (
-      url === "/pohonkinerjaopd" ||
-      url === "/pohoncascadingopd" ||
-      url === "/permasalahanopd" ||
-      url === "/isustrategisopd" ||
-      url === "/tujuanopd" || url === "/sasaranopd" || url === "/ikuopd" || url === "/matrix-renstra" ||
-      url.startsWith("/Renja") ||
-      url === "/rencanaaksiopd"
-    ) {
+    if (url.startsWith("/perencanaan-opd")) {
       setDataMaster(false);
       setDataMasterOpd(false);
       setPerencanaanKota(false);
@@ -151,18 +143,13 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRenja(false);
     }
     if (
-      url === "/permasalahanopd" ||
-      url === "/isustrategisopd" ||
-      url === "/tujuanopd" ||
-      url === "/sasaranopd" ||
-      url === "/ikuopd" ||
-      url === "/matrix-renstra"
+      url.startsWith("/perencanaan-opd/renstra")
     ) {
       setRenstra(true);
       setRenja(false);
     }
     if (
-      url.startsWith("/Renja")
+      url.startsWith("/renja")
     ) {
       setRenstra(false);
       setRenja(true);
@@ -581,14 +568,14 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                 </li>
                 {/* SUBS MENU RENSTRA */}
                 <div className={`transition-all duration-300 ease-in-out ${Renstra ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                  <Link href="/permasalahanopd">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/permasalahanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/perencanaan-opd/renstra/permasalahan-opd">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-opd/renstra/permasalahan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbAlertTriangle className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Permasalahan</span>
                     </li>
                   </Link>
-                  <Link href="/isustrategisopd">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/isustrategisopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/perencanaan-opd/renstra/isu-strategis-opd">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-opd/renstra/isu-strategis-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbFocus2 className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Isu Strategis</span>
                     </li>
