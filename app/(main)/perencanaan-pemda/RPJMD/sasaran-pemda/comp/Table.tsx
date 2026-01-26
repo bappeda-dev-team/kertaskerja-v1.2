@@ -235,7 +235,7 @@ const Table: React.FC<table> = ({ id_periode, tahun_awal, tahun_akhir, jenis, ta
                                                                             </button>
                                                                             :
                                                                             <button
-                                                                                className="flex justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500"
+                                                                                className="flex justify-between gap-1 rounded-full p-1 bg-sky-500 text-white border border-sky-500 hover:bg-white hover:text-sky-500 hover:border hover:border-sky-500 cursor-pointer"
                                                                                 onClick={() => HandleModal("tambah", item.subtematik_id, item.nama_subtematik, item.jenis_pohon)}
                                                                             >
                                                                                 <div className="flex gap-1">
