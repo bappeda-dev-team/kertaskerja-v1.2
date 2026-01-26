@@ -6,7 +6,7 @@ import { ButtonSky, ButtonRed, ButtonSkyBorder, ButtonRedBorder } from '@/compon
 import Select from 'react-select';
 import { LoadingButton, LoadingClip } from "@/lib/loading";
 import { AlertNotification } from "@/lib/alert";
-import { FormValue, Indikator, Periode, TujuanOpd } from "../type";
+import { FormValue, Periode, TujuanOpd } from "../type";
 import { apiFetch } from "@/hook/apiFetch";
 import { GetResponseGlobal, OptionTypeString } from "@/types";
 import { useBrandingContext } from "@/providers/BrandingProvider";
