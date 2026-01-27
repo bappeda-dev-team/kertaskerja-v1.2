@@ -643,8 +643,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                     </li>
                   </Link>
                 </div>
-                <Link href="/rencanaaksiopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/rencanaaksiopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/perencanaan-opd/renaksi-opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-opd/renaksi-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbCalendarPlus className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Rencana Aksi OPD</span>
                   </li>
