@@ -100,8 +100,6 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, kode_opd, nam
     const [BidangUrusanOption, setBidangUrusanOption] = useState<BidangUrusan[]>([]);
     const [PermasalahanOption, setPermasalahanOption] = useState<PermasalahanOpdOption[]>([]);
 
-    const [User, setUser] = useState<any>(null);
-    // const [Periode, setPeriode] = useState<any>(null);
     const [Proses, setProses] = useState<boolean>(false);
     const [LoadingOption, setLoadingOption] = useState<boolean>(false);
 
@@ -389,7 +387,6 @@ export const ModalIsu: React.FC<modal> = ({ isOpen, onClose, Data, kode_opd, nam
     if (!isOpen) {
         return null;
     } else {
-
         return (
             <div className="fixed inset-0 flex items-center justify-center z-50">
                 <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>

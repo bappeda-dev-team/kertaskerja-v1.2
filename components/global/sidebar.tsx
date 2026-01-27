@@ -598,8 +598,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKU OPD</span>
                     </li>
                   </Link>
-                  <Link href="/matrix-renstra">
-                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/matrix-renstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                  <Link href="/perencanaan-opd/renstra/matrix-renstra">
+                    <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-opd/renstra/matrix-renstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                       <TbShoppingCartDollar className="text-xl" />
                       <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Matrix Renstra</span>
                     </li>
