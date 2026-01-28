@@ -14,6 +14,7 @@ export const TableLaporan = () => {
     const [Loading, setLoading] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
     const { branding } = useBrandingContext();
+    const opd = branding?.user?.roles == "super_admin" ? branding?.opd?.value : branding?.user?.kode_opd;
 
     useEffect(() => {
         const fetchLaporan = async (url: string) => {
@@ -39,7 +40,7 @@ export const TableLaporan = () => {
         }
         if (branding?.user?.roles != undefined) {
             if (branding?.user?.roles == 'super_admin' || branding?.user?.roles == 'admin_opd' || branding?.user?.roles == 'reviewer') {
-                fetchLaporan(`${branding?.api_perencanaan}/rincian_belanja/laporan?kode_opd=${branding?.opd?.value}&tahun=${branding?.tahun?.value}`)
+                fetchLaporan(`${branding?.api_perencanaan}/rincian_belanja/laporan?kode_opd=${opd}&tahun=${branding?.tahun?.value}`)
             } else {
                 fetchLaporan(`${branding?.api_perencanaan}/rincian_belanja/pegawai/${branding?.user?.nip}/${branding?.tahun?.value}`)
             }
@@ -155,13 +156,13 @@ export const TableLaporan = () => {
                                         {rekin.rencana_aksi === null ?
                                             <tr>
                                                 <td colSpan={5} className="border-r border-b px-6 py-4 text-red-500">Renaksi Belum di tambahkan di rencana kinerja</td>
-                                                <td className="border-r border-b px-6 py-4">Rp.0</td>
+                                                <td className="border-b px-6 py-4">Rp.0</td>
                                             </tr>
                                             :
                                             rekin.rencana_aksi.map((renaksi: RencanaAksi, index_renaksi: number) => (
                                                 <tr key={renaksi.renaksi_id || index_renaksi}>
                                                     <td colSpan={5} className="border-r border-b px-6 py-4">Renaksi {index_renaksi + 1}: {renaksi.renaksi}</td>
-                                                    <td className="border-r border-b px-6 py-4">Rp.{formatRupiah(renaksi.anggaran || 0)}</td>
+                                                    <td className="border-b px-6 py-4">Rp.{formatRupiah(renaksi.anggaran || 0)}</td>
                                                 </tr>
                                             ))
                                         }

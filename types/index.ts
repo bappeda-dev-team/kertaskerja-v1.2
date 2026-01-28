@@ -16,3 +16,9 @@ export interface GetResponseGlobal<T> {
     status: string;
     code: number;
 }
+
+export interface GetResponseTagging<T> {
+    status: number;
+    message: string;
+    data: T;
+}

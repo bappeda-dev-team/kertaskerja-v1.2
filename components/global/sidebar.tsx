@@ -836,8 +836,8 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Rincian Belanja</span>
                 </li>
               </Link>
-              <Link href="/laporantaggingpohon">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporantaggingpohon" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/laporan/renaksi-tematik">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/renaksi-tematik" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbCircleCheck className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Renaksi Tematik</span>
                 </li>

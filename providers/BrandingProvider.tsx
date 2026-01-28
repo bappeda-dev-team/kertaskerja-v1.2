@@ -26,6 +26,7 @@ interface BrandingContextType {
     api_permasalahan: string;
     api_csf: string;
     api_renaksi_opd: string;
+    api_tagging: string;
     tahun: OptionType | null | undefined;
     opd: OptionTypeString | null | undefined;
     user: any;
@@ -39,6 +40,7 @@ const api_perencanaan = process.env.NEXT_PUBLIC_API_URL || "";
 const api_csf = process.env.NEXT_PUBLIC_API_URL_CSF || "";
 const api_permasalahan = process.env.NEXT_PUBLIC_API_URL_PERMASALAHAN || "";
 const api_renaksi_opd = process.env.NEXT_PUBLIC_API_URL_RENAKSI_OPD || "";
+const api_tagging = process.env.NEXT_PUBLIC_API_URL_TAGGING || "";
 
 // context
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);
@@ -99,6 +101,7 @@ export function BrandingProvider({ children }: Readonly<{ children: React.ReactN
           api_csf: api_csf,
           api_permasalahan: api_permasalahan,
           api_renaksi_opd: api_renaksi_opd,
+          api_tagging: api_tagging,
           tahun: Tahun,
           opd: SelectedOpd,
           user: User
