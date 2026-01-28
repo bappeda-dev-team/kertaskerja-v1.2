@@ -69,9 +69,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setLaporan(false);
     }
     //DATA MASTER
-    if (
-      url.startsWith("/datamaster")
-    ) {
+    if (url.startsWith("/datamaster")) {
       setDataMaster(true);
       setDataMasterOpd(false);
       setPerencanaanKota(false);
@@ -122,9 +120,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setTematikKota(false);
       setRKPD(false);
     }
-    if (
-      url.startsWith("/RKPD")
-    ) {
+    if (url.startsWith("/RKPD")) {
       // sub menu
       setRPJMD(false);
       setTematikKota(false);
@@ -142,22 +138,16 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setRenstra(false);
       setRenja(false);
     }
-    if (
-      url.startsWith("/perencanaan-opd/renstra")
-    ) {
+    if (url.startsWith("/perencanaan-opd/renstra")) {
       setRenstra(true);
       setRenja(false);
     }
-    if (
-      url.startsWith("/renja")
-    ) {
+    if (url.startsWith("/renja")) {
       setRenstra(false);
       setRenja(true);
     }
     //PERENCANAAN ASN
-    if (
-      url.startsWith("/perencanaan-asn")
-    ) {
+    if (url.startsWith("/perencanaan-asn")) {
       setDataMaster(false);
       setDataMasterOpd(false);
       setPerencanaanKota(false);
@@ -182,18 +172,11 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
       setPerencanaan(false);
       setLaporan(true);
     }
-    if (
-      url.startsWith("/laporan/review-pokin")
-    ) {
+    if (url.startsWith("/laporan/review-pokin")) {
       setReview(true);
       setRenstraView(false);
     }
-    if (
-      url === "/tujuanopdview" ||
-      url === "/sasaranopdview" ||
-      url === "/ikuopdview" ||
-      url === "/laporanrenstra"
-    ) {
+    if (url.startsWith("/laporan/renstra")) {
       setReview(false);
       setRenstraView(true);
     }
@@ -816,26 +799,26 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
               </li>
               {/* SUBS MENU LAPORAN RENSTRA OPD */}
               <div className={`transition-all duration-300 ease-in-out ${RenstraView ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                <Link href="/tujuanopdview">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/tujuanopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/laporan/renstra/tujuan-opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/renstra/tujuan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbMapPin className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Tujuan OPD</span>
                   </li>
                 </Link>
-                <Link href="/sasaranopdview">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/sasaranopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/laporan/renstra/sasaran-opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/renstra/sasaran-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbTarget className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sasaran OPD</span>
                   </li>
                 </Link>
-                <Link href="/ikuopdview">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/ikuopdview" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/laporan/renstra/iku-opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/renstra/iku-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbChartBar className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>IKU OPD</span>
                   </li>
                 </Link>
-                <Link href="/laporanrenstra">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporanrenstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/laporan/renstra/matrix-renstra">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/laporan/renstra/matrix-renstra" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbShoppingCartDollar className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Matrix Renstra</span>
                   </li>
