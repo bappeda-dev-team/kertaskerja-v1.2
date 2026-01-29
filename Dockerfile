@@ -20,7 +20,7 @@ COPY app ./app
 COPY components ./components
 COPY hook ./hook
 COPY lib ./lib
-COPY provider ./provider
+COPY providers ./providers
 COPY public ./public
 COPY types ./types
 COPY public ./public
