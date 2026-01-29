@@ -373,14 +373,14 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
             {/* SUB MENU DATA MASTER OPD */}
             {(User?.roles == 'super_admin' || User?.roles == 'admin_opd' || User?.roles == 'reviewer') &&
               <div className={`transition-all duration-300 ease-in-out ${DataMasterOpd ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-                <Link href="/useropd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${(url === "/useropd" || url === "/useropd/tambah" || url === `/useropd/${id}`) ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/datamaster-opd/user-opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${(url === "/datamaster-opd/user-opd" || url === "/useropd/tambah" || url === `/useropd/${id}`) ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbUser className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>User OPD</span>
                   </li>
                 </Link>
-                <Link href="/subkegiatanopd">
-                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/subkegiatanopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+                <Link href="/datamaster-opd/sub-kegiatan-opd">
+                  <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/datamaster-opd/sub-kegiatan-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                     <TbFileCode2 className="text-xl" />
                     <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Sub Kegiatan OPD</span>
                   </li>
