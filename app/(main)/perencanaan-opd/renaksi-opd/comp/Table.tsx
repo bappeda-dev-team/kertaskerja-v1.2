@@ -11,6 +11,7 @@ import { GetResponseGlobal } from "@/types";
 import { GetResponseFindallRenaksiOpd, IndikatorSasaranOpd, RencanaKinerja, SubKegiatan, Rekin } from "../type";
 import { ModalIndikator2 } from "@/components/global/ModalIndikator";
 import { formatRupiah } from "@/lib/FormatRupiah";
+import { ModalRenaksiOpd } from "./ModalRenaksiOpd";
 
 interface Table {
     kode_opd: string;
@@ -145,36 +146,30 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, ko
     const [IndikatorSasaran, setIndikatorSasaran] = useState<IndikatorSasaranOpd[]>([]);
     const [Rekin, setRekin] = useState<string>('');
 
+    const [ModalOpen, setModalOpen] = useState<boolean>(false);
+    const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
+
     const [Loading, setLoading] = useState<boolean>(false);
     const [ProsesSync, setProsesSync] = useState<boolean>(false);
     const [DataNull, setDataNull] = useState<boolean>(false);
     const [Error, setError] = useState<boolean>(false);
     const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
-
-    const handleModalTambah = (id_sasaran: number, rekin: string, indikator: IndikatorSasaranOpd[]) => {
-        if (ModalTambah) {
-            setModaltambah(false);
-            setRekin('');
-            setIdSasaran(0);
-            setIndikatorSasaran([]);
-        } else {
-            setModaltambah(true);
-            setIdSasaran(id_sasaran);
+    
+    const handleModal = (jenis: "tambah" | "edit", rekin: string, indikator: IndikatorSasaranOpd[], id_renaksi?: number, id_sasaran?: number) => {
+        if (ModalOpen) {
+            setModalOpen(false);
+            setJenisModal(jenis);
             setRekin(rekin);
+            setIdRenaksi(id_renaksi ?? 0);
             setIndikatorSasaran(indikator);
-        }
-    }
-    const handleModalEdit = (id: number, rekin: string, indikator: IndikatorSasaranOpd[]) => {
-        if (ModalEdit) {
-            setModalEdit(false);
-            setRekin('');
-            setIdRenaksi(0);
-            setIndikatorSasaran([]);
+            setIdSasaran(id_sasaran ?? 0);
         } else {
-            setModalEdit(true);
+            setModalOpen(true);
+            setJenisModal(jenis);
             setRekin(rekin);
-            setIdRenaksi(id);
+            setIdRenaksi(id_renaksi ?? 0);
             setIndikatorSasaran(indikator);
+            setIdSasaran(id_sasaran ?? 0);
         }
     }
 
@@ -261,7 +256,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, ko
     return (
         <div className="flex flex-col">
             <ButtonSkyBorder
-                onClick={() => handleModalTambah(id, sasaran, indikator)}
+                onClick={() => handleModal("tambah", sasaran, indikator, 0, id)}
                 className="flex items-center justify-center gap-1 w-full mb-2"
             >
                 <TbCirclePlus />
@@ -298,13 +293,13 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, ko
                                             {rk.subkegiatan ?
                                                 <td className="border-r border-b border-gray-200 px-6 py-4">
                                                     {rk.subkegiatan.map((sk: SubKegiatan, sk_index: number) => (
-                                                        <React.Fragment key={sk_index}>
+                                                        <div className="w-full flex flex-col items-center gap-1" key={sk_index}>
                                                             <p>{sk.kode_subkegiatan} - {sk.nama_subkegiatan}</p>
                                                             {/* <ButtonBlackBorder className="flex items-center justify-center gap-1 text-xs">
                                                                 <TbSearch />
                                                                 Cek Indikator
                                                             </ButtonBlackBorder> */}
-                                                        </React.Fragment>
+                                                        </div>
                                                     ))}
                                                 </td>
                                                 :
@@ -328,7 +323,7 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, ko
                                                     </ButtonSkyBorder>
                                                     <ButtonGreen
                                                         className="w-full"
-                                                        onClick={() => handleModalEdit(rk.id_renaksiopd, rk.nama_rencana_kinerja, indikator)}
+                                                        onClick={() => handleModal("edit", rk.nama_rencana_kinerja, indikator, rk.id_renaksiopd, 0)}
                                                     >
                                                         <TbPencil className="mr-1" />
                                                         Edit
@@ -358,11 +353,11 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, ko
                         }
                     </tbody>
                 </table>
-                {/* {ModalTambah &&
+                {ModalOpen &&
                     <ModalRenaksiOpd
-                        metode="baru"
+                        jenis={JenisModal}
                         isOpen={ModalTambah}
-                        onClose={() => handleModalTambah(0, '', [])}
+                        onClose={() => handleModal("tambah", "", [])}
                         kode_opd={kode_opd}
                         tahun={String(tahun)}
                         id_rekin={IdRekin}
@@ -372,20 +367,6 @@ export const RekinAsn: React.FC<RekinAsn> = ({ id, sasaran, indikator, tahun, ko
                         onSuccess={() => setFetchTrigger((prev) => !prev)}
                     />
                 }
-                {ModalEdit &&
-                    <ModalRenaksiOpd
-                        metode="lama"
-                        isOpen={ModalEdit}
-                        onClose={() => handleModalEdit(0, '', [])}
-                        id={IdRenaksi}
-                        kode_opd={kode_opd}
-                        tahun={String(tahun)}
-                        id_rekin={IdRekin}
-                        rekin={Rekin}
-                        indikator={IndikatorSasaran ? IndikatorSasaran : []}
-                        onSuccess={() => setFetchTrigger((prev) => !prev)}
-                    />
-                } */}
             </div>
         </div>
     )

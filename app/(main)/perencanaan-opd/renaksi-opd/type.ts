@@ -1,3 +1,5 @@
+import { OptionTypeString } from "@/types";
+
 export interface GetResponseFindallRenaksiOpd {
     id: number;
     nama_sasaran_opd: string;
@@ -53,4 +55,32 @@ export interface Rekin {
     nama_sasaran_opd: string;
     tahun_renaksi: string;
     rencana_kinerja: RencanaKinerja[];
+}
+
+export interface RenaksiOpdDetail {
+    id_renaksiopd: number;
+    rekin_id: string;
+    tahun_renaksi: string;
+    keterangan: string;
+    nama_rencana_kinerja: string;
+    sasaran_opd: GetResponseFindallRenaksiOpd;
+}
+
+export interface RekinOption {
+    id_rencana_kinerja: string;
+    id_pohon: number;
+    nama_pohon: string;
+    nama_rencana_kinerja: string;
+    tahun: string;
+    status_rencana_kinerja: string;
+    catatan: string;
+    operasional_daerah: {
+        kode_opd: string;
+        nama_opd: string;
+    };
+}
+
+export interface FormValue {
+    id_renaksi: OptionTypeString;
+    catatan: string;
 }

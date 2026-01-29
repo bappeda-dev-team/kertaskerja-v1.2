@@ -22,3 +22,9 @@ export interface GetResponseTagging<T> {
     message: string;
     data: T;
 }
+
+export interface GetResponseRencanaKinerja<T> {
+    rencana_kinerja: T,
+    status: string;
+    code: number;
+}
