@@ -16,11 +16,17 @@ RUN \
   else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
   fi
 
-COPY src ./src
+COPY app ./app
+COPY components ./components
+COPY hook ./hook
+COPY lib ./lib
+COPY provider ./provider
 COPY public ./public
-COPY next.config.mjs .
+COPY types ./types
+COPY public ./public
+COPY next.config.ts .
 COPY tsconfig.json .
-COPY tailwind.config.ts postcss.config.mjs ./
+COPY postcss.config.mjs ./
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
