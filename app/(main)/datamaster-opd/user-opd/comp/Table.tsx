@@ -130,14 +130,14 @@ const Table = () => {
                     Tambah User
                 </ButtonSkyBorder>
             </HeaderCard>
-            <div className="flex pt-2 px-2 items-center">
+            <div className="flex pt-2 px-2 items-center w-full">
                 <TbSearch className="absolute ml-2 text-slate-500" />
                 <input
                     type="text"
                     placeholder="Cari nama pegawai / NIP"
                     value={SearchParams}
                     onChange={(e) => setSearchParams(e.target.value)}
-                    className="py-1 pl-7 border rounded-lg border-gray-300 min-w-[250px]"
+                    className="py-1 pl-7 border rounded-lg w-full"
                 />
             </div>
             <div className="overflow-auto m-2 rounded-t-xl border">

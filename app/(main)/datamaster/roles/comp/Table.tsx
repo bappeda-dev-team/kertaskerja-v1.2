@@ -75,13 +75,13 @@ const Table = () => {
             <>
                 <Card>
                     <HeaderCard>
-                        <h1 className="font-bold text-lg uppercase">Master Lembaga</h1>
+                        <h1 className="font-bold text-lg uppercase">Master Role</h1>
                         <ButtonSky 
                             className='flex items-center gap-1'
                             onClick={() => handleModal("tambah", null)}
                         >
                             <TbCirclePlus />
-                            Tambah Lembaga
+                            Tambah role
                         </ButtonSky>
                     </HeaderCard>
                     <div className="flex flex-wrap m-2">

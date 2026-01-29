@@ -7,7 +7,7 @@ import { ButtonGreen, ButtonRed, ButtonBlack, ButtonSky } from "@/components/ui/
 import { AlertNotification, AlertQuestion } from "@/lib/alert";
 import { useState, useEffect } from "react";
 import Select from 'react-select';
-import { TbUsers, TbCirclePlus, TbTrash, TbPencil } from "react-icons/tb";
+import { TbSearch, TbUsers, TbCirclePlus, TbTrash, TbPencil } from "react-icons/tb";
 import { apiFetch } from "@/hook/apiFetch";
 import { Card, HeaderCard } from "@/components/ui/Card";
 import { OptionTypeString } from "@/types";
@@ -58,6 +58,15 @@ const Table = () => {
             getData();
         }
     }, [Opd, branding]);
+
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const FilteredData = User?.filter((item: GetResponseMasterUser) => {
+        const params = searchQuery.toLowerCase();
+        return (
+            item.nama_pegawai.toLowerCase().includes(params) ||
+            item.nip.toLowerCase().includes(params)
+        )
+    });
 
     const fetchOpd = async () => {
         setIsLoading(true);
@@ -173,17 +182,28 @@ const Table = () => {
         <>
             <Card>
                 <HeaderCard>
-                    <h1 className="font-bold text-lg uppercase">Master User</h1>
-                    <ButtonSky
-                        className='flex items-center gap-1'
-                        onClick={() => handleModal("tambah", null)}
-                    >
-                        <TbCirclePlus />
-                        Tambah User
-                    </ButtonSky>
+                    <div className="flex flex-col items-start">
+                        <h1 className="font-bold text-lg uppercase">Master User</h1>
+                        <h1>{Opd?.label}</h1>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                        <ButtonSky
+                            className='flex items-center gap-1 w-full'
+                            onClick={() => handleModal("tambah", null)}
+                        >
+                            <TbCirclePlus />
+                            Tambah User
+                        </ButtonSky>
+                        <Link href="/datamaster/user/user-admin-opd">
+                            <ButtonBlack className="flex items-center gap-1">
+                                <TbUsers />
+                                Daftar Admin OPD
+                            </ButtonBlack>
+                        </Link>
+                    </div>
                 </HeaderCard>
-                <div className="flex flex-wrap gap-2 items-center justify-between px-3 py-2">
-                    <div className="uppercase">
+                <div className="flex flex-wrap gap-2 items-center justify-between px-3 py-2 w-full">
+                    <div className="flex gap-1 w-full">
                         <Select
                             styles={{
                                 control: (baseStyles) => ({
@@ -207,13 +227,17 @@ const Table = () => {
                                 }
                             }}
                         />
+                        <div className="flex px-2 items-center w-full">
+                            <TbSearch className="absolute ml-2 text-slate-500" />
+                            <input
+                                type="text"
+                                placeholder="Cari nama pegawai / NIP"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="py-1 pl-7 border rounded-lg w-full"
+                            />
+                        </div>
                     </div>
-                    <Link href="/datamaster/user/user-admin-opd">
-                        <ButtonBlack className="flex items-center gap-1">
-                            <TbUsers />
-                            Daftar Admin OPD
-                        </ButtonBlack>
-                    </Link>
                 </div>
                 <div className="overflow-auto m-2 rounded-t-xl border">
                     <table className="w-full">
@@ -229,14 +253,14 @@ const Table = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {DataNull ?
+                            {DataNull || FilteredData.length === 0 ?
                                 <tr>
                                     <td className="px-6 py-3 uppercase" colSpan={13}>
                                         Tidak ada User / Belum Ditambahkan
                                     </td>
                                 </tr>
                                 :
-                                User.map((data: GetResponseMasterUser, index) => (
+                                FilteredData.map((data: GetResponseMasterUser, index: number) => (
                                     <tr key={data.id}>
                                         <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
                                         <td className="border-r border-b px-6 py-4">{data.nama_pegawai ? data.nama_pegawai : "-"}</td>
