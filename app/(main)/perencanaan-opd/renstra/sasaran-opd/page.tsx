@@ -117,7 +117,7 @@ const SasaranOpdPage = () => {
                     <div className="flex m-2">
                         {Periode ?
                             <div className="w-full">
-                                <Table 
+                                <Table
                                     kode_opd={opd}
                                     id_periode={Periode?.id}
                                     jenis_periode={Periode?.jenis_periode}

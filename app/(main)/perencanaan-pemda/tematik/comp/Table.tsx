@@ -27,8 +27,8 @@ const Table = () => {
     const { branding } = useBrandingContext();
 
     const handleModal = (data: Tematiks | null, jenis: "tambah" | "edit") => {
-        if(ModalOpen){
-            setModalOpen(false); 
+        if (ModalOpen) {
+            setModalOpen(false);
             setDataModal(data);
             setJenisModal(jenis);
         } else {
@@ -138,14 +138,20 @@ const Table = () => {
                                                     <>
                                                         <td className="border-r border-gray-200 border-b px-6 py-4">
                                                             {data.indikator.map((item: Indikator, i_index: number) => (
-                                                                <p key={i_index} className="p-1 my-2 rounded-lg border border-sky-500 w-full">{i_index + 1}. {item.nama_indikator || "-"}</p>
+                                                                <div key={i_index} className="p-1 my-2 flex items-center gap-1 rounded-lg border border-emerald-500 w-full">
+                                                                    <p className="text-white text-sm font-light bg-emerald-500 px-2 py-1 border rounded-full">{i_index + 1}</p>
+                                                                    {item.nama_indikator || "-"}
+                                                                </div>
                                                             ))}
                                                         </td>
                                                         <td className="border-r border-gray-200 border-b px-6 py-4">
                                                             {data.indikator.map((item: Indikator, i_index: number) => (
                                                                 item.targets ?
                                                                     item.targets.map((t: Target, t_index: number) => (
-                                                                        <p className="p-1 my-2 rounded-lg border border-sky-500 w-full" key={t_index}>{i_index + 1}. {t.target || "-"}</p>
+                                                                        <div className="p-1 my-2 flex items-center gap-1 rounded-lg border border-emerald-500 w-full" key={t_index}>
+                                                                            <p className="text-white text-sm font-light bg-emerald-500 px-2 py-1 border rounded-full">{i_index + 1}</p>
+                                                                            {t.target || "-"}
+                                                                        </div>
                                                                     ))
                                                                     :
                                                                     <p>-</p>
@@ -155,7 +161,10 @@ const Table = () => {
                                                             {data.indikator.map((item: Indikator, i_index: number) => (
                                                                 item.targets ?
                                                                     item.targets.map((t: Target, t_index: number) => (
-                                                                        <p className="p-1 my-2 rounded-lg border border-sky-500 w-full" key={t_index}>{i_index + 1}. {t.satuan || "-"}</p>
+                                                                        <div className="p-1 my-2 flex items-center gap-1 rounded-lg border border-emerald-500 w-full" key={t_index}>
+                                                                            <p className="text-white text-sm font-light bg-emerald-500 px-2 py-1 border rounded-full">{i_index + 1}</p>
+                                                                            {t.satuan || "-"}
+                                                                        </div>
                                                                     ))
                                                                     :
                                                                     <p>-</p>
@@ -195,7 +204,7 @@ const Table = () => {
                             </div>
                         </div>
                         {ModalOpen &&
-                            <ModalTematik 
+                            <ModalTematik
                                 isOpen={ModalOpen}
                                 onClose={() => handleModal(null, "tambah")}
                                 Data={DataModal}

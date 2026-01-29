@@ -39,8 +39,6 @@ export const ModalTematik: React.FC<modal> = ({ isOpen, onClose, onSuccess, jeni
     });
 
     const [Proses, setProses] = useState<boolean>(false);
-    const [Loading, setLoading] = useState<boolean>(false);
-    const [OptionOpd, setOptionOpd] = useState<OptionTypeString[]>([]);
 
     const handleClose = () => {
         onClose();
@@ -126,11 +124,11 @@ export const ModalTematik: React.FC<modal> = ({ isOpen, onClose, onSuccess, jeni
                                 )
                             }}
                         />
-                        <label className="uppercase text-base font-bold text-gray-700 my-2">
+                        <label className="uppercase text-base font-bold text-sky-700 my-2">
                             indikator tematik :
                         </label>
                         {fields.map((field, index) => (
-                            <div key={index} className="flex flex-col my-2 py-2 px-5 border rounded-lg">
+                            <div key={index} className="flex flex-col my-2 py-2 px-5 border border-sky-700 rounded-lg">
                                 <Controller
                                     name={`indikator.${index}.nama_indikator`}
                                     control={control}
@@ -197,7 +195,7 @@ export const ModalTematik: React.FC<modal> = ({ isOpen, onClose, onSuccess, jeni
                             </div>
                         ))}
                         <ButtonSkyBorder
-                            className="mb-3 mt-2 w-full flex items-center gap-1"
+                            className="mt-2 w-full flex items-center gap-1"
                             type="button"
                             onClick={() => append({ nama_indikator: "", targets: [{ target: "", satuan: "" }] })}
                         >
