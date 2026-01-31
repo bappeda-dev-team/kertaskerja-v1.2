@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { LoadingClip } from "@/lib/loading";
 import { apiFetch } from "@/hook/apiFetch";
 import { AlertNotification, AlertQuestion } from "@/lib/alert";
-import { GetResponseTematik, GetResponseTematiks, Tematiks, Indikator, Target } from "../type";
+import { Tematiks, Indikator, Target } from "../type";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { HeaderCard, Card } from "@/components/ui/Card";
 import { ButtonSkyBorder, ButtonRedBorder } from "@/components/ui/button";
@@ -191,6 +191,7 @@ const Table = () => {
                                                                     }
                                                                 });
                                                             }}
+                                                            disabled={Proses}
                                                         >
                                                             <TbTrash />
                                                             Hapus

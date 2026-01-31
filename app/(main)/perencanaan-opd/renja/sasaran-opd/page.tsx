@@ -1,6 +1,6 @@
 'use client'
 
-// import Table from "@/app/(main)/perencanaan-opd/renstra/tujuan-opd/comp/Table";
+import Table from "./comp/Table";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { OpdNull, TahunNull } from "@/components/ui/OpdTahunNull";
 import { Breadcrumbs } from "@/components/ui/breadcrumb";
@@ -41,7 +41,7 @@ const SasaaranOpdRenjaPage = () => {
                         </div>
                     </div>
                     <div className="flex m-2">
-                        
+                        <Table kode_opd={opd} tahun={branding?.tahun?.value} />
                     </div>
                 </div>
             </>

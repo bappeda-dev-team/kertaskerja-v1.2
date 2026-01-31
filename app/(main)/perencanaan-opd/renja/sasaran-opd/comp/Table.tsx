@@ -1,55 +1,13 @@
 'use client'
 
-import { ButtonRed, ButtonGreen } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { LoadingClip } from "@/lib/loading";
-import { AlertNotification, AlertQuestion } from "@/lib/alert";
+import { AlertNotification } from "@/lib/alert";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { useRouter } from "next/navigation";
-
-interface Target {
-    id: string;
-    target: string;
-    satuan: string;
-    tahun: string;
-}
-
-interface Indikator {
-    id: string;
-    indikator: string;
-    rumus_perhitungan: string;
-    sumber_data: string;
-    target: Target[];
-}
-
-interface Pelaksana {
-    id: string;
-    pegawai_id: string;
-    nip: string;
-    nama_pegawai: string;
-}
-
-interface SasaranOpd {
-    id: string;
-    tahun_awal: string;
-    tahun_akhir: string;
-    jenis_periode: string;
-    nama_sasaran_opd: string;
-    id_tujuan_opd: number,
-    nama_tujuan_opd: string,
-    nip: string;
-    indikator: Indikator[];
-}
-
-interface Sasaran {
-    id_pohon: number;
-    nama_pohon: string;
-    jenis_pohon: string;
-    tahun_pohon: string;
-    level_pohon: number;
-    sasaran_opd: SasaranOpd[];
-    pelaksana: Pelaksana[];
-}
+import { apiFetch } from "@/hook/apiFetch";
+import { GetResponseGlobal } from "@/types";
+import { GetResponseFindallRenjaSasaranOpd, Indikator, Target, Pelaksana, SasaranOpd } from "../type";
 
 interface table {
     kode_opd: string;
@@ -58,7 +16,7 @@ interface table {
 
 const Table: React.FC<table> = ({ kode_opd, tahun }) => {
 
-    const [Sasaran, setSasaran] = useState<Sasaran[]>([]);
+    const [Sasaran, setSasaran] = useState<GetResponseFindallRenjaSasaranOpd[]>([]);
 
     const [Error, setError] = useState<boolean | null>(null);
     const [DataNull, setDataNull] = useState<boolean | null>(null);
@@ -68,24 +26,12 @@ const Table: React.FC<table> = ({ kode_opd, tahun }) => {
     const { branding } = useBrandingContext();
 
     useEffect(() => {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        let url = '';
-        if (branding?.user?.roles == 'super_admin') {
-            url = `sasaran_opd/renja/${branding?.opd?.value}/${tahun}/RPJMD`
-        } else {
-            url = `sasaran_opd/renja/${branding?.user?.kode_opd}/${tahun}/RPJMD`
-        }
         const fetchSasaranOpd = async () => {
             setLoading(true)
-            try {
-                const response = await fetch(`${API_URL}/${url}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const result = await response.json();
+            await apiFetch<GetResponseGlobal<GetResponseFindallRenjaSasaranOpd[]>>(`${branding?.api_perencanaan}/sasaran_opd/renja/${kode_opd}/${tahun}/RPJMD`, {
+                method: "GET",
+            }).then((result) => {
                 const data = result.data;
-                // console.log(data);
                 if (data === null) {
                     setDataNull(true);
                     setSasaran([]);
@@ -103,17 +49,14 @@ const Table: React.FC<table> = ({ kode_opd, tahun }) => {
                     setError(true);
                     console.log(result.data);
                 }
-            } catch (err) {
+            }).catch((err) => {
                 setError(true);
                 console.error(err)
-            } finally {
+            }).finally(() => {
                 setLoading(false);
-            }
+            })
         }
-        if (branding?.user?.roles !== undefined) {
-            fetchSasaranOpd();
-
-        }
+        fetchSasaranOpd();
     }, [branding, tahun, kode_opd, router]);
 
     if (Loading) {
@@ -128,11 +71,11 @@ const Table: React.FC<table> = ({ kode_opd, tahun }) => {
                 <h1 className="text-red-500 font-bold mx-5 py-5">Error, Periksa koneksi internet atau database server, jika error masih berlanjut hubungi tim developer</h1>
             </div>
         )
-    } 
+    }
 
     return (
         <>
-            <div className="overflow-auto m-2 rounded-t-xl border">
+            <div className="overflow-auto m-2 rounded-t-xl border border-gray-200">
                 <table className="w-full">
                     <thead>
                         <tr className="bg-emerald-500 text-white">
@@ -159,7 +102,7 @@ const Table: React.FC<table> = ({ kode_opd, tahun }) => {
                                 </td>
                             </tr>
                             :
-                            Sasaran.map((data: Sasaran, index: number) => {
+                            Sasaran.map((data: GetResponseFindallRenjaSasaranOpd, index: number) => {
                                 // Cek apakah data.tujuan_pemda ada
                                 const hasPelaksana = data.pelaksana.length != 0;
                                 const hasSasaran = data.sasaran_opd.length != 0;

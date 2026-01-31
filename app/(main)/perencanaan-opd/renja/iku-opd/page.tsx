@@ -4,6 +4,7 @@
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { OpdNull, TahunNull } from "@/components/ui/OpdTahunNull";
 import { Breadcrumbs } from "@/components/ui/breadcrumb";
+import MaintenanceMode from "@/components/ui/maintenance";
 
 const RenjaIkuOpd = () => {
 
@@ -41,7 +42,7 @@ const RenjaIkuOpd = () => {
                         </div>
                     </div>
                     <div className="flex m-2">
-                        
+                        <MaintenanceMode />
                     </div>
                 </div>
             </>
