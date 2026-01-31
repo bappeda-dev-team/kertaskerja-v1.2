@@ -23,7 +23,6 @@ const Misi = () => {
 
     const { branding } = useBrandingContext();
 
-    const [Tahun, setTahun] = useState<any>(null);
     const [Periode, setPeriode] = useState<GetResponseFindallPeriode | null>(null);
     const [PeriodeOption, setPeriodeOption] = useState<GetResponseFindallPeriode[]>([]);
 
