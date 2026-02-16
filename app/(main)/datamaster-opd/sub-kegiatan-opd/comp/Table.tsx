@@ -114,7 +114,7 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
                     Tambah Sub Kegiatan Baru
                 </ButtonGreenBorder>
             </div>
-            <div className="overflow-auto m-2 rounded-t-xl border">
+            <div className="overflow-auto m-2 rounded-t-xl border border-gray-200">
                 <table className="w-full">
                     <thead>
                         <tr className="bg-blue-500 text-white">
@@ -135,7 +135,7 @@ const Table: React.FC<table> = ({ tahun, opd }) => {
                             :
                             SubKegiatan.map((data: GetResponseFindallSubKegiatanOpd, index: number) => (
                                 <tr key={data.id}>
-                                    <td className="border-r border-b px-6 py-4 text-center">{index + 1}</td>
+                                    <td className="border px-6 py-4 text-center">{index + 1}</td>
                                     <td className="border-r border-b px-6 py-4">{data.kode_subkegiatan}</td>
                                     <td className="border-r border-b px-6 py-4">{data.nama_subkegiatan}</td>
                                     <td className="border-r border-b px-6 py-4">{data.nama_opd}</td>

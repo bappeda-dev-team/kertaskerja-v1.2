@@ -9,7 +9,8 @@ import { LoadingClip } from '@/lib/loading';
 import { apiFetch } from '@/hook/apiFetch';
 import { useBrandingContext } from '@/providers/BrandingProvider';
 import { ModalReview } from '@/components/global/pohon/ModalReviewPohon';
-import { FormPohonPemda } from './FormPohonPemda';
+import { FormPohonPemda, FormEditPohon } from './FormPohonPemda';
+import { FormAmbilPohon } from './FormAmbilPohon';
 
 interface pohon {
     tema: any;
@@ -45,10 +46,8 @@ interface KeteranganTagging {
 export const Pohon: React.FC<pohon> = ({ tema, deleteTrigger, user, show_all, set_show_all, idForm }) => {
 
     const [childPohons, setChildPohons] = useState(tema.childs || []);
-    const [PutPohons, setPutPohons] = useState(tema.childs || []);
     const [formList, setFormList] = useState<number[]>([]); // List of form IDs
     const [PutList, setPutList] = useState<number[]>([]); // List of form IDs
-    const [PutListStrategic, setPutListStrategic] = useState<number[]>([]); // List of form IDs
     const [FormStrategic, setFormStrategic] = useState<number[]>([]); // List of form IDs
     const [strategicPohons, setStrategicPohons] = useState(tema.strategics || []);
     const [edit, setEdit] = useState<boolean>(false);
@@ -79,8 +78,19 @@ export const Pohon: React.FC<pohon> = ({ tema, deleteTrigger, user, show_all, se
     const newPutChild = () => {
         setPutList([...PutList, Date.now()]); // Using unique IDs
     };
-    const newStrategic = () => {
-        setFormStrategic([...FormStrategic, Date.now()]); // Using unique IDs
+    const newStrategic = (id: number) => {
+        const nextId = id + 1;
+        setFormStrategic([...FormStrategic, nextId]);
+        setTimeout(() => {
+            const element = document.getElementById(nextId.toString());
+            if (element) {
+                element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                    inline: "nearest"
+                });
+            }
+        }, 100);
     };
     const handleEditSuccess = (data: any) => {
         setEdited(data);
@@ -114,8 +124,8 @@ export const Pohon: React.FC<pohon> = ({ tema, deleteTrigger, user, show_all, se
                     setReview([]);
                 }
             }).catch(err => {
-                // AlertNotification("Gagal", `${err}`, "error", 3000, true);
-                // console.error(err);
+                AlertNotification("Gagal", `${err}`, "error", 3000, true);
+                console.error(err);
             })
         } catch (err) {
             AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
@@ -222,12 +232,11 @@ export const Pohon: React.FC<pohon> = ({ tema, deleteTrigger, user, show_all, se
                 <React.Fragment>
                     <li>
                         {edit ?
-                            <FormPohonPemda
+                            <FormEditPohon
                                 level={tema.level_pohon}
                                 id={tema.id}
                                 key={tema.id}
                                 formId={tema.id}
-                                jenis="edit"
                                 onCancel={() => setEdit(false)}
                                 EditBerhasil={handleEditSuccess}
                             />
@@ -482,7 +491,7 @@ export const Pohon: React.FC<pohon> = ({ tema, deleteTrigger, user, show_all, se
                                                     {/* TOMBOL ADD KHUSUS STRATEGIC KOTA  */}
                                                     {(tema.level_pohon === 0 || tema.level_pohon === 1 || tema.level_pohon === 2 || tema.level_pohon === 3) &&
                                                         <ButtonRedBorder className={`px-3 bg-white flex justify-center items-center py-1 bg-linear-to-r border-2 rounded-lg`}
-                                                            onClick={newStrategic}
+                                                            onClick={() => newStrategic(idForm ?? 0)}
                                                         >
                                                             <TbCirclePlus className='mr-1' />
                                                             Strategic
@@ -522,42 +531,37 @@ export const Pohon: React.FC<pohon> = ({ tema, deleteTrigger, user, show_all, se
                             ))}
                             {/* FORM POHON */}
                             {formList.map((formId: number) => (
-                                <li key={formId}>
+                                <React.Fragment key={formId}>
                                     <FormPohonPemda
                                         level={tema.level_pohon}
                                         id={tema.id}
                                         key={formId}
                                         formId={formId}
-                                        jenis="tambah"
                                         onCancel={() => setFormList(formList.filter((id) => id !== formId))}
                                         EditBerhasil={() => null}
                                     />
-                                </li>
+                                </React.Fragment>
                             ))}
                             {/* FORM STRATEGIC */}
                             {FormStrategic.map((formIdStrategic: number) => (
-                                <li key={formIdStrategic}>
+                                <React.Fragment key={formIdStrategic}>
                                     <FormPohonPemda
                                         level={3}
                                         id={tema.id}
                                         key={formIdStrategic}
                                         formId={formIdStrategic}
-                                        jenis='tambah'
                                         onCancel={() => setFormStrategic(FormStrategic.filter((id) => id !== formIdStrategic))}
                                         EditBerhasil={() => null}
                                     />
-                                </li>
+                                </React.Fragment>
                             ))}
                             {PutList.map((formId: number) => (
-                                <li key={formId}>
-                                    {/* <FormAmbilPohon
-                                        level={tema.level_pohon}
-                                        id={tema.id}
-                                        key={formId}
-                                        formId={formId}
-                                        onCancel={() => setPutList(PutList.filter((id) => id !== formId))}
-                                    /> */}
-                                </li>
+                                <FormAmbilPohon
+                                    level={tema.level_pohon}
+                                    id={tema.id}
+                                    key={formId}
+                                    onCancel={() => setPutList(PutList.filter((id) => id !== formId))}
+                                />
                             ))}
                         </ul>
                     </li>
@@ -578,7 +582,7 @@ export const TablePohon = (props: any) => {
     const status = props.item.status;
 
     // STYLE TABLE
-    const TableStyle = `border px-2 py-3 bg-white text-start rounded-tl-lg
+    const TableStyle = `border px-2 py-3 bg-white text-start
                         ${jenis === "Tematik" && "border-black"}
                         ${jenis === "Sub Tematik" && "border-black"}
                         ${jenis === "Sub Sub Tematik" && "border-black"}
@@ -614,7 +618,7 @@ export const TablePohon = (props: any) => {
             <table className='w-full'>
                 <tbody>
                     <tr>
-                        <td className={`min-w-[100px] ${TableStyle}`}>
+                        <td className={`min-w-[100px] ${TableStyle} rounded-tl-lg`}>
                             {(jenis === 'Tematik' || jenis === 'Sub Tematik' || jenis === 'Sub Sub Tematik' || jenis === 'Super Sub Tematik') && 'Tema'}
                             {(jenis === 'Strategic' || jenis === 'Strategic Pemda') && 'Strategic'}
                             {(jenis === 'Tactical' || jenis === 'Tactical Pemda') && 'Tactical'}
@@ -622,7 +626,7 @@ export const TablePohon = (props: any) => {
                             {jenis === 'Operational N' && 'Operational N'}
                         </td>
                         <td
-                            className={`min-w-[300px] ${TableStyle}`}
+                            className={`min-w-[300px] ${TableStyle} rounded-tr-lg`}
                         >
                             {tema ? tema : nama_pohon ? nama_pohon : "-"}
                         </td>
@@ -709,10 +713,10 @@ export const TablePohon = (props: any) => {
                     </tr>
                     {status &&
                         <tr>
-                            <td className={`min-w-[100px] rounded-bl-lg ${TableStyle}`}>
+                            <td className={`min-w-[100px] rounded-l-lg ${TableStyle}`}>
                                 Status
                             </td>
-                            <td className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-br-lg ${TableStyle}`}>
+                            <td className={`min-w-[300px] border px-2 py-3 bg-white text-start rounded-r-lg ${TableStyle}`}>
                                 {status === 'menunggu_disetujui' ? (
                                     <div className="flex items-center">
                                         {status || "-"}
