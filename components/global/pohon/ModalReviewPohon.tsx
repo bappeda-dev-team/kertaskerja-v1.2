@@ -113,8 +113,8 @@ export const ModalReview: React.FC<ModalProps> = ({ isOpen, onClose, id, jenis, 
             <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
             <div className="bg-white rounded-lg p-8 z-10 w-3/5 text-start">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="w-max-[500px] py-2 border-b font-bold text-center">
-                        {jenis === 'tambah' ? "Tambah Review" : "Edit Review"} id : {id} pohon: {idPohon ? idPohon : ""}
+                    <div className="w-max-[500px] py-2 border-b font-bold text-center uppercase">
+                        {jenis} review pohon: {idPohon ? idPohon : ""}
                     </div>
 
                     {IsLoading ?

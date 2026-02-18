@@ -218,7 +218,7 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
         )}
         {/* header sidebar */}
         <div className="flex gap-x-4 items-center">
-          <div className={`flex flex-wrap justify-center items-center text-white text-center text-lg ${!isOpen && 'scale-0'} duration-300`}>
+          <div className={`flex flex-col justify-center w-full items-center text-white text-lg ${!isOpen && 'scale-0'} duration-300`}>
             <h2 className='font-bold uppercase'>
               {branding?.title || "Kertas Kerja"}
             </h2>
@@ -527,14 +527,14 @@ export const Sidebar = ({ isZoomed, isOpen, toggleSidebar }: SidebarProps) => {
           {/* SUB MENU PERENCANAAN OPD */}
           {(User?.roles == 'super_admin' || User?.roles == 'admin_opd') ?
             <div className={`transition-all duration-300 ease-in-out ${PerencanaanOPD ? 'px-3 py-2 flex flex-col border-l-2 border-white rounded-b-xl ml-2  max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-              <Link href="/pohonkinerjaopd">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/pohonkinerjaopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/perencanaan-opd/pohon-kinerja-opd">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-opd/pohon-kinerja-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbBinaryTree className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Pohon Kinerja OPD</span>
                 </li>
               </Link>
-              <Link href="/pohoncascadingopd">
-                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/pohoncascadingopd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
+              <Link href="/perencanaan-opd/pohon-cascading-opd">
+                <li className={`flex items-center gap-x-2 cursor-pointer p-2 rounded-xl ${url === "/perencanaan-opd/pohon-cascading-opd" ? "bg-white text-gray-800" : "hover:bg-slate-500"}`}>
                   <TbBinaryTree2 className="text-xl" />
                   <span className={`${!isOpen && 'hidden'} origin-left duration-200`}>Pohon Cascading</span>
                 </li>
