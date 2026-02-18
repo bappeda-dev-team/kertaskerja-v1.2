@@ -183,7 +183,7 @@ const Header = () => {
                     isSearchable
                 />
                 <button
-                    className="border border-white text-white px-3 py-2 min-w-20 max-h-[37.5px] rounded-br-lg rounded-tr-lg hover:bg-white hover:text-gray-800"
+                    className="border border-white text-white px-3 py-2 min-w-20 max-h-[37.5px] rounded-br-lg rounded-tr-lg hover:bg-white hover:text-gray-800 cursor-pointer"
                     onClick={() => {
                         handleOpd(SelectedOpd);
                         handleTahun(Tahun);

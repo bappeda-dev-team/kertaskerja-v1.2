@@ -6,7 +6,7 @@ import { TbEye, TbHandStop, TbPointer, TbPrinter } from 'react-icons/tb';
 import { LoadingBeat, LoadingButton } from '@/lib/loading';
 import { OpdTahunNull, TahunNull } from '@/components/ui/OpdTahunNull';
 import { PohonCascading } from './PohonCascading';
-// import { PohonLaporan } from '@/components/lib/Pohon/Cascading/PohonLaporan';
+import { PohonLaporan } from '@/app/(main)/laporan/laporan-cascading-opd/comp/PohonLaporan';
 import { ButtonBlackBorder, ButtonSky } from '@/components/ui/button';
 import { apiFetch } from '@/hook/apiFetch'; 
 import { useBrandingContext } from '@/providers/BrandingProvider';
@@ -281,11 +281,11 @@ const HeadCascading: React.FC<cascading> = ({ jenis }) => {
                                         <ul>
                                             {Pokin.childs.map((data: any) => (
                                                 <React.Fragment key={data.id}>
-                                                    {/* <PohonLaporan
+                                                    <PohonLaporan
                                                         tema={data}
                                                         show_all={ShowAll}
                                                         set_show_all={() => setShowAll(false)}
-                                                    /> */}
+                                                    />
                                                 </React.Fragment>
                                             ))}
                                         </ul>
