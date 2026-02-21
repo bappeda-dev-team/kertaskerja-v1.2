@@ -5,6 +5,7 @@ import { useBrandingContext } from '@/providers/BrandingProvider';
 import { AlertNotification } from '@/lib/alert';
 import { apiFetch } from '@/hook/apiFetch';
 import { Pohon } from './Pohon';
+import { PohonLaporan } from '@/app/(main)/laporan/laporan-cascading-opd/comp/PohonLaporan';
 
 interface pohontematik {
     id: number;
@@ -95,6 +96,13 @@ const BridgeTematik = ({ id, jenis, show_all, set_show_all }: pohontematik) => {
                         user={branding?.user?.roles}
                         tema={Pokin}
                         deleteTrigger={() => setDeleted((prev) => !prev)}
+                        show_all={show_all}
+                        set_show_all={set_show_all}
+                    />
+                }
+                {jenis === "laporan" &&
+                    <PohonLaporan
+                        tema={Pokin}
                         show_all={show_all}
                         set_show_all={set_show_all}
                     />

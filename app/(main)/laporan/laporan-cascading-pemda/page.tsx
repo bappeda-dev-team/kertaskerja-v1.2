@@ -1,7 +1,7 @@
 'use client'
 
 import { Breadcrumbs } from '@/components/ui/breadcrumb';
-import CardTermatik from './comp/CardTematik';
+import CardTematik from '../../perencanaan-pemda/pohon-kinerja-pemda/comp/CardTematik';
 
 const PohonKinerjaPemda = () => {
 
@@ -13,7 +13,7 @@ const PohonKinerjaPemda = () => {
     return (
         <>
             <Breadcrumbs items={menu} />
-            <CardTermatik jenis='pemda'/>
+            <CardTematik jenis='laporan'/>
         </>
     )
 }

@@ -9,13 +9,13 @@ import { ButtonBlackBorder } from '@/components/ui/button';
 import { AlertNotification } from '@/lib/alert';
 import { useBrandingContext } from '@/providers/BrandingProvider';
 import BridgeTematik from './BridgeTematik';
+import { OptionType } from '@/types';
 
-interface OptionType {
-    value: number;
-    label: string;
+interface CardTematik {
+    jenis: "laporan" | "pemda";
 }
 
-const CardTematik = () => {
+const CardTematik: React.FC<CardTematik> = ({jenis}) => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [TematikOption, setTematikOption] = useState<OptionType[]>([]);
@@ -64,13 +64,23 @@ const CardTematik = () => {
     };
 
     const handleSetTematik = (tema: any) => {
-        if (!tema) {
-            setTematik(null); // Jika tema dihapus, reset Tematik
-            router.push(`/perencanaan-pemda/pohon-kinerja-pemda`);
-            return;
+        if(jenis === "pemda"){
+            if (!tema) {
+                setTematik(null); // Jika tema dihapus, reset Tematik
+                router.push(`/perencanaan-pemda/pohon-kinerja-pemda`);
+                return;
+            }
+            setTematik(tema);
+            router.push(`/perencanaan-pemda/pohon-kinerja-pemda?tema=${tema.label}&id=${tema.value}`);
+        } else {
+            if (!tema) {
+                setTematik(null); // Jika tema dihapus, reset Tematik
+                router.push(`/laporan/laporan-cascading-pemda`);
+                return;
+            }
+            setTematik(tema);
+            router.push(`/laporan/laporan-cascading-pemda?tema=${tema.label}&id=${tema.value}`);
         }
-        setTematik(tema);
-        router.push(`/perencanaan-pemda/pohon-kinerja-pemda?tema=${tema.label}&id=${tema.value}`);
     };
 
     return (
@@ -144,7 +154,7 @@ const CardTematik = () => {
                             <BridgeTematik
                                 id={Tematik?.value}
                                 show_all={ShowAll}
-                                jenis='pemda'
+                                jenis={jenis}
                                 set_show_all={() => {
                                     setShowAll(true)
                                 }}
