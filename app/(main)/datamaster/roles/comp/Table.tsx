@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LoadingClip } from "@/lib/loading";
 import { useBrandingContext } from "@/providers/BrandingProvider";
 import { GetResponseRoles } from "../type";
-import { AlertNotification } from "@/lib/alert";
+import { AlertNotification, AlertQuestion } from "@/lib/alert";
 import { apiFetch } from "@/hook/apiFetch";
 import { ButtonSkyBorder, ButtonRedBorder, ButtonSky } from "@/components/ui/button";
 import { TbPencil, TbTrash, TbCirclePlus } from "react-icons/tb";
@@ -18,7 +18,6 @@ const Table = () => {
     const [JenisModal, setJenisModal] = useState<"tambah" | "edit">("tambah");
     const [DataModal, setDataModal] = useState<GetResponseRoles | null>(null);
 
-    const [FetchTrigger, setFetchTrigger] = useState<boolean>(false);
     const [Error, setError] = useState<boolean | null>(null);
     const [Loading, setLoading] = useState<boolean | null>(null);
     const { branding } = useBrandingContext();
@@ -56,7 +55,31 @@ const Table = () => {
             })
         }
         getData();
-    }, [branding, FetchTrigger]);
+    }, [branding]);
+
+    const handleSuccess = (result: GetResponseRoles, jenis: "tambah" | "edit") => {
+        if (jenis === "tambah") {
+            setData((prev) => [...prev, result]);
+        } else {
+            setData(prev =>
+                prev.map(item =>
+                    item.id === result.id ? result : item
+                )
+            )
+        }
+    }
+
+    const hapusData = async (id: any) => {
+        await apiFetch(`${branding?.api_perencanaan}/role/delete/${id}`, {
+            method: "DELETE",
+        }).then(() => {
+            setData(Data.filter((data) => (data.id !== id)))
+            AlertNotification("Berhasil", "Data Roles Berhasil Dihapus", "success", 1000);
+        }).catch((err) => {
+            console.error(err);
+            AlertNotification("Gagal", "cek koneksi internet atau database server", "error", 2000);
+        })
+    };
 
     if (Loading) {
         return (
@@ -76,7 +99,7 @@ const Table = () => {
                 <Card>
                     <HeaderCard>
                         <h1 className="font-bold text-lg uppercase">Master Role</h1>
-                        <ButtonSky 
+                        <ButtonSky
                             className='flex items-center gap-1'
                             onClick={() => handleModal("tambah", null)}
                         >
@@ -97,7 +120,7 @@ const Table = () => {
                                 <tbody>
                                     {Data.length > 0 ?
                                         Data.map((item: GetResponseRoles, index: number) => (
-                                            <tr key={index}>
+                                            <tr key={item.id}>
                                                 <td className="border-x border-b border-orange-500 py-4 px-3 text-center">{index + 1}</td>
                                                 <td className="border-r border-b border-orange-500 px-6 py-4">{item.role || "-"}</td>
                                                 <td className="border-r border-b border-orange-500 px-6 py-4 text-center">
@@ -111,6 +134,11 @@ const Table = () => {
                                                         </ButtonSkyBorder>
                                                         <ButtonRedBorder
                                                             className="w-full flex items-center gap-1"
+                                                            onClick={() => AlertQuestion("Hapus", `Hapus data roles ${item.role}?`, "question", "Hapus", "Batal").then((result: any) => {
+                                                                if (result.isConfirmed) {
+                                                                    hapusData(item.id);
+                                                                }
+                                                            })}
                                                         >
                                                             <TbTrash />
                                                             Delete
@@ -132,10 +160,10 @@ const Table = () => {
                     </div>
                 </Card>
                 {ModalOpen &&
-                    <ModalMasterRoles 
+                    <ModalMasterRoles
                         isOpen={ModalOpen}
                         onClose={() => handleModal("tambah", null)}
-                        onSuccess={() => setFetchTrigger((prev) => !prev)}
+                        onSuccess={handleSuccess}
                         Data={DataModal}
                         jenis={JenisModal}
                     />

@@ -14,7 +14,7 @@ interface modal {
     jenis: "tambah" | "edit";
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: () => void;
+    onSuccess: (result: GetResponseRoles, jenis: "tambah" | "edit") => void;
     Data: GetResponseRoles | null
 }
 
@@ -22,7 +22,7 @@ export const ModalMasterRoles: React.FC<modal> = ({ isOpen, onClose, onSuccess, 
 
     const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValue>({
         defaultValues: {
-            role: Data?.role,
+            role: Data?.role || "",
         }
     });
 
@@ -45,9 +45,9 @@ export const ModalMasterRoles: React.FC<modal> = ({ isOpen, onClose, onSuccess, 
             await apiFetch(jenis === "tambah" ? `${branding?.api_perencanaan}/role/create` : `${branding?.api_perencanaan}/role/update/${Data?.id}`, {
                 method: jenis === "tambah" ? "POST" : "PUT",
                 body: formData as any
-            }).then(_ => {
+            }).then((result: any) => {
                 AlertNotification("Berhasil", "Berhasil Menyimpan Data Roles", "success", 3000, true);
-                onSuccess();
+                onSuccess(result.data, jenis);
                 handleClose();
             }).catch(err => {
                 AlertNotification("Gagal", `${err}`, "error", 3000, true);
